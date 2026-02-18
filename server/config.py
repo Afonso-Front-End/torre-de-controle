@@ -18,16 +18,16 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 600  # 10 horas
 
-    # CORS: origens permitidas (lista)
-    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    # CORS: origens permitidas (lista). Inclui 5173 (dev) e 8000 (app servido pelo próprio backend).
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8000,http://127.0.0.1:8000"
 
     # Servidor
     host: str = "0.0.0.0"
     port: int = 8000
 
-    # GitHub – para verificação de atualizações (ex.: "seu-usuario" e "torre-de-controle")
-    github_repo_owner: str = ""
-    github_repo_name: str = ""
+    # GitHub – verificação de atualizações. Quem clona o repo usa estes valores por padrão.
+    github_repo_owner: str = "Afonso-Front-End"
+    github_repo_name: str = "torre-de-controle"
 
     @property
     def cors_origins_list(self):

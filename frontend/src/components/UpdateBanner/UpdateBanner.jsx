@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { getCheckUpdate } from '../../services'
 import './UpdateBanner.css'
 
@@ -22,29 +23,49 @@ function compareVersions(a, b) {
   return 0
 }
 
+/** Dados fake para pré-visualização do banner (ex.: ?preview=update-banner na URL). */
+const PREVIEW_UPDATE = {
+  tag_name: 'v1.1.0',
+  name: 'v1.1.0 (pré-visualização)',
+  html_url: 'https://github.com',
+}
+
 export function UpdateBanner() {
+  const [searchParams] = useSearchParams()
   const [update, setUpdate] = useState(null)
   const [dismissed, setDismissed] = useState(false)
 
+  const isPreview =
+    import.meta.env.DEV && searchParams.get('preview') === 'update-banner'
+
   useEffect(() => {
     const current = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
-    const dismissedFor = localStorage.getItem(STORAGE_KEY)
-    if (dismissedFor) {
-      setDismissed(true)
+
+    if (isPreview) {
+      setUpdate(PREVIEW_UPDATE)
       return
     }
 
     getCheckUpdate()
       .then((res) => {
+        if (import.meta.env.DEV) {
+          console.log('[UpdateBanner] Resposta da API:', res)
+        }
         if (!res.has_update || !res.version) return
         if (compareVersions(res.version, current) <= 0) return
+        const dismissedTag = localStorage.getItem(STORAGE_KEY)
+        if (dismissedTag === res.tag_name) return
         setUpdate(res)
       })
-      .catch(() => {})
-  }, [])
+      .catch((err) => {
+        if (import.meta.env.DEV) {
+          console.warn('[UpdateBanner] Erro ao verificar atualização:', err?.message || err)
+        }
+      })
+  }, [isPreview])
 
   const handleDismiss = () => {
-    if (update?.tag_name) {
+    if (!isPreview && update?.tag_name) {
       localStorage.setItem(STORAGE_KEY, update.tag_name)
     }
     setDismissed(true)

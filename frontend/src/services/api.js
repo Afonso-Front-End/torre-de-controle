@@ -328,6 +328,27 @@ export async function updateContatoListaTelefones(token, docId, contato) {
   }, token, TABLE_ID.LISTA_TELEFONES)
 }
 
+/**
+ * Cria ou atualiza o contato para motorista + base na lista_telefones.
+ * Se não existir linha com esse Motorista e HUB, insere nova (Data, Motorista, Status, Cidade, HUB, Contato).
+ * @param {string} token - JWT
+ * @param {string} motorista - Nome do motorista
+ * @param {string} base - HUB / base
+ * @param {string} contato - Número de telefone
+ * @returns {Promise<{ created: boolean, _id: string }>}
+ */
+export async function upsertContatoListaTelefones(token, motorista, base, contato) {
+  if (!token) throw new Error('Sessão expirada. Faça login novamente.')
+  return request('/api/lista-telefones/contato', {
+    method: 'PUT',
+    body: JSON.stringify({
+      motorista: String(motorista ?? '').trim(),
+      base: String(base ?? '').trim(),
+      contato: String(contato ?? '').trim(),
+    }),
+  }, token, TABLE_ID.LISTA_TELEFONES)
+}
+
 /* ----- Verificar pedidos (rota separada, paginação no servidor) ----- */
 
 /**

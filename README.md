@@ -1,74 +1,76 @@
 # Torre de Controle
 
-Aplicação web (React + FastAPI + MongoDB) pensada para rodar e ser atualizada **apenas com Docker**. O utilizador final não precisa de instalar Node, Python nem aceder ao código.
+Aplicação web (React + FastAPI + MongoDB) para gestão de pedidos, SLA e lista de telefones. Projeto pensado para **rodar localmente** em cada máquina (sem Docker). Quem recebe o projeto (por clone ou download do GitHub) instala as dependências e executa o servidor e o frontend no próprio PC.
 
 ---
 
-## Como rodar (primeira vez ou após alterações no código)
+## Requisitos
 
-Requisitos: [Docker](https://docs.docker.com/get-docker/) e [Docker Compose](https://docs.docker.com/compose/install/) instalados.
-
-Na **pasta raiz do projeto** (onde está o `docker-compose.yml`):
-
-```bash
-docker compose up -d --build
-```
-
-- **Frontend:** http://localhost:8080  
-- **Backend (API):** http://localhost:8000  
-- **MongoDB:** porta 27017 (apenas entre containers; não é necessário aceder diretamente)
-
-Para ver os logs:
-
-```bash
-docker compose logs -f
-```
-
-Para parar:
-
-```bash
-docker compose down
-```
+- **Node.js** (para o frontend — desenvolvimento e build)
+- **Python 3.x** (para o servidor API)
+- **MongoDB** (instalado e a correr localmente, ex.: porta 27017)
 
 ---
 
-## Como atualizar (quando existirem novas imagens)
+## Como rodar (desenvolvimento)
 
-Se as imagens forem distribuídas por um registry (ex.: Docker Hub), o utilizador atualiza assim, **sem reinstalar**:
+1. **MongoDB** deve estar em execução (ex.: `mongodb://localhost:27017`).
 
-```bash
-docker compose pull
-docker compose up -d
-```
+2. **Servidor (API)** — na pasta `server/`:
+   - Crie um ficheiro `.env` com as variáveis necessárias (veja `server/.env.example` ou a secção [Configuração](#configuração)).
+   - Instale dependências e inicie:
+   ```bash
+   cd server
+   pip install -r requirements.txt
+   python main.py
+   ```
+   Por defeito a API fica em **http://localhost:8000** (ou na porta definida em `PORT` no `.env`).
 
-Isto baixa as novas imagens e recria os containers. Os dados do MongoDB ficam no volume `mongodb_data` e são mantidos.
-
-Se a distribuição for por código (build local), após receber a nova versão do projeto:
-
-```bash
-docker compose build --pull
-docker compose up -d
-```
-
----
-
-## Estrutura
-
-| Componente   | Pasta / Imagem | Porta (host) |
-|-------------|-----------------|--------------|
-| Frontend    | `front-end/`    | 8080 → 80    |
-| Backend API | `server/`       | 8000 → 8000  |
-| MongoDB     | imagem `mongo:7`| 27017        |
-
-Configurações sensíveis (ex.: `SECRET_KEY`) podem ser definidas em ficheiro `.env` na raiz ou em variáveis de ambiente. O frontend usa `VITE_API_URL` no **build** (definido no `docker-compose.yml` como `http://localhost:8000`); se a API for noutro endereço, altere esse valor e faça rebuild da imagem do frontend.
+3. **Frontend** — na pasta `frontend/`:
+   - Crie um `.env` com `VITE_API_URL` apontando para a API (ex.: `http://localhost:8000` ou `http://localhost:8001` se o servidor usar outra porta).
+   - Instale dependências e inicie:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   A aplicação abre em **http://localhost:5173** e comunica com a API configurada em `VITE_API_URL`.
 
 ---
 
-## Resumo para o utilizador final
+## Como rodar (app servido pelo próprio backend)
 
-1. Ter Docker e Docker Compose instalados.  
-2. **Rodar:** `docker compose up -d --build` (primeira vez) ou `docker compose up -d` (já construído).  
-3. Abrir o browser em http://localhost:8080.  
-4. **Atualizar:** `docker compose pull` e `docker compose up -d` (ou, em cenário de build local, `docker compose build --pull` e `docker compose up -d`).
+É possível construir o frontend e ser o **próprio servidor** a servir os ficheiros estáticos na porta 8000. Nesse caso o utilizador abre apenas **http://localhost:8000** no browser. A pasta `build/` pode conter scripts para gerar o executável (ex.: `TorreDeControle.exe`) que inicia o servidor e abre a aplicação — consulte a pasta `build/` e a documentação em `docs/ATUALIZACOES-GITHUB.md` para publicar releases.
 
-Não é necessário clonar repositórios nem instalar Node ou Python na máquina.
+---
+
+## Configuração
+
+| Ficheiro        | Variáveis principais |
+|-----------------|----------------------|
+| `server/.env`   | `MONGO_URI`, `MONGO_DB_NAME`, `SECRET_KEY`, `PORT`, `CORS_ORIGINS`, `GITHUB_REPO_OWNER`, `GITHUB_REPO_NAME` (para aviso de atualização) |
+| `frontend/.env` | `VITE_API_URL` (URL da API, ex.: `http://localhost:8000`) |
+
+O `server/.env` **não** deve ser commitado (deve estar no `.gitignore`). Quem clona o repositório cria o seu próprio `.env` a partir de um exemplo ou da documentação.
+
+---
+
+## Estrutura do projeto
+
+| Componente    | Pasta      | Descrição |
+|---------------|------------|-----------|
+| Frontend      | `frontend/`| React + Vite; versão em `frontend/package.json` |
+| Backend API   | `server/`  | FastAPI + MongoDB |
+| Documentação  | `docs/`    | Instruções de releases, atualizações via GitHub, etc. |
+| Build / .exe  | `build/`   | Scripts para gerar o executável (se aplicável) |
+
+---
+
+## Resumo para quem usa o projeto
+
+1. Ter **MongoDB**, **Python** e **Node.js** instalados.
+2. Clonar ou transferir o projeto (ex.: download do GitHub).
+3. Configurar os `.env` no `server/` e no `frontend/` (pelo menos a URL da API no frontend).
+4. Iniciar o MongoDB, depois o servidor (`server/`) e o frontend (`frontend/` com `npm run dev`) ou, se existir, o executável que junta servidor + interface.
+
+Para **avisos de nova versão** quando há uma release no GitHub, ver `docs/ATUALIZACOES-GITHUB.md`.

@@ -14,7 +14,7 @@ Documento único do projeto para continuidade: se o chat sumir, outro dev ou cha
 - **Importe tabela Consulta das bipagems em tempo real** – tabela de **pedidos_com_status** com seleção (checkbox), envio para **Motorista** (Base desativada no front com "Em breve"). **Botão Config** abre modal com critério para envio ao Motorista (prefixos do Correio, ex.: TAC, MEI, ETC) e opção "Enviar automaticamente para motorista após importar planilha" (mesma config do utilizador, antes no Perfil)
 - **Resultados da consulta** – visão agrupada por entregador: **Correio de coleta ou entrega** + **Base de entrega** + **Total** + **Evolução**; select “Coleção” (Motorista — Pronto; Base — Em breve). Filtro por **data do envio** (persistido em localStorage). Clique na coluna **Correio** abre modal "Pedidos do entregador" (tabs Entregues/Não entregues, coluna de marcação para copiar números JMS); coluna **Base de entrega** abre a página **Evolução** (performance da base); coluna **Evolução** abre a página **Evolução** (evolução do motorista). Cabeçalho da coluna **Total** mostra badge com o total geral
 
-Stack: **React (Vite)** no frontend, **FastAPI** no backend, **MongoDB** como base de dados. Tudo orquestrado com **Docker Compose**.
+Stack: **React (Vite)** no frontend, **FastAPI** no backend, **MongoDB** como base de dados. Projeto pensado para rodar **localmente** (sem Docker).
 
 ---
 
@@ -28,25 +28,18 @@ Stack: **React (Vite)** no frontend, **FastAPI** no backend, **MongoDB** como ba
 | `server/`    | FastAPI: `main.py`, `config.py`, `database.py`, `security.py`, `limiter.py`, `table_ids.py`. **`schemas/`** – Pydantic (auth, resultados_consulta). **`services/`** – lógica de negócio (ex.: `services/resultados_consulta.py`). **`routers/`** – apenas HTTP. **`models/`** – reexporta `schemas` (compatibilidade). |
 | `docs/`      | Esta documentação |
 
-### Como rodar (Docker – recomendado)
+### Como rodar (local)
 
-Na **pasta raiz** (onde está o `docker-compose.yml`):
+1. **MongoDB** em execução (ex.: `mongodb://localhost:27017`).
+2. **Backend** – em `server/`: criar `.env` (ver variáveis abaixo), depois `pip install -r requirements.txt` e `python main.py`. API em http://localhost:8000 (ou porta em `PORT`).
+3. **Frontend** – em `frontend/`: criar `.env` com `VITE_API_URL` apontando para a API, depois `npm install` e `npm run dev`. App em http://localhost:5173.
 
-```bash
-docker compose up -d --build
-```
-
-- **Frontend:** http://localhost:8080  
-- **Backend (API):** http://localhost:8000  
-- **MongoDB:** porta 27017 (entre containers)
-
-Parar: `docker compose down`  
-Logs: `docker compose logs -f`
+Ver **README.md** na raiz para mais detalhes.
 
 ### Variáveis de ambiente
 
-- **Backend:** `MONGO_URI`, `MONGO_DB_NAME`, `CORS_ORIGINS`, `SECRET_KEY` (definidas no `docker-compose.yml` ou em `.env` na raiz).
-- **Frontend:** `VITE_API_URL` (usado no **build**; no compose está `http://localhost:8000`).
+- **Backend** (`server/.env`): `MONGO_URI`, `MONGO_DB_NAME`, `CORS_ORIGINS`, `SECRET_KEY`, `PORT`, `GITHUB_REPO_OWNER`, `GITHUB_REPO_NAME` (para aviso de atualização).
+- **Frontend** (`frontend/.env`): `VITE_API_URL` (URL da API, ex.: `http://localhost:8000`).
 
 ---
 
@@ -255,7 +248,7 @@ Implementado no **service** **`server/services/resultados_consulta.py`** (consta
 
 ## 8. Resumo para outro chat
 
-- **Projeto:** Torre de Controle – React + FastAPI + MongoDB; rodar com `docker compose up -d --build`.
+- **Projeto:** Torre de Controle – React + FastAPI + MongoDB; rodar localmente (MongoDB + servidor em `server/` + frontend em `frontend/`). Ver README.md.
 - **Funcionalidades:** Auth, Lista de telefones, Verificar pedidos parados, Consultar pedidos, Resultados da consulta. **Importação incremental:** uploads não apagam dados anteriores; cada registo tem `importDate`; duplicados por "Número de pedido JMS" são ignorados. **Filtro por data:** em cada página (Lista telefones, Verificar pedidos, Consultar pedidos) há um select múltiplo "Data do envio" (componente DateFilterSelect); endpoints `GET .../datas` e parâmetro `?datas=YYYY-MM-DD,...`.
 - **Regra de status já implementada:** Base = (Digitalizador preenchido e Correio vazio) **ou** Tipo de bipagem = "Entrada no galpão de pacote não expedido"; Motorista = Digitalizador e Correio preenchidos.
 - **Onde alterar a lógica de status:** `server/routers/pedidos_status.py` (constante `TIPO_BIPAGEM_BASE`, `_calcular_status`, e o loop em `_executar_processamento` que lê a coluna “Tipo de bipagem” e chama `_calcular_status`).

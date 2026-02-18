@@ -12,6 +12,7 @@ export {
   updateListaTelefonesHub,
   getContatoListaTelefones,
   updateContatoListaTelefones,
+  upsertContatoListaTelefones,
   salvarPedidos,
   getPedidos,
   getPedidosDatas,

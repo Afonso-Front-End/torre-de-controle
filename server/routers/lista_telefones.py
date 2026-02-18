@@ -52,6 +52,17 @@ def _indices_contato(header_values: list) -> tuple[int | None, int | None, int |
     return motorista_idx, hub_idx, contato_idx
 
 
+def _indices_data(header_values: list) -> int | None:
+    """Obtém o índice da coluna Data no cabeçalho (ex.: 'Data')."""
+    if not header_values:
+        return None
+    norm = lambda s: (s or "").strip().upper()
+    for i, v in enumerate(header_values):
+        if norm(str(v)) == "DATA":
+            return i
+    return None
+
+
 class UpdateHubBody(BaseModel):
     col_index: int
     valor_atuais: list[str]  # valores brutos a substituir (ex.: ["   BNU -SC", "BNU -SC"])
@@ -66,6 +77,13 @@ class DeleteListaBody(BaseModel):
 class UpdateContatoBody(BaseModel):
     """Atualiza o campo Contato de um registro por _id."""
     doc_id: str = Field(..., min_length=1)
+    contato: str = Field(default="")
+
+
+class UpsertContatoBody(BaseModel):
+    """Cria ou atualiza o contato para motorista + base (HUB). Se não existir linha, insere nova na lista_telefones."""
+    motorista: str = Field(..., min_length=1)
+    base: str = Field(default="")
     contato: str = Field(default="")
 
 
@@ -297,6 +315,79 @@ def atualizar_contato_motorista_base(
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Registro não encontrado.")
     return {"updated": 1}
+
+
+@router.put("/contato")
+def upsert_contato_motorista_base(
+    body: UpsertContatoBody,
+    user_id: str = Depends(require_user_id),
+    table_id: int = Depends(require_table_id),
+):
+    """
+    Cria ou atualiza o contato para motorista + base (HUB).
+    Se existir linha com esse Motorista e HUB, atualiza o Contato.
+    Se não existir, insere nova linha na lista_telefones com Data, Motorista, Status, Cidade, HUB, Contato.
+    Retorna { created: bool, _id: str } (created=True quando inseriu nova linha).
+    """
+    db = get_db()
+    col = db[COLLECTION]
+    header_doc = col.find_one(
+        {USER_ID_FIELD: user_id, "$or": [{HEADER_FLAG: True}, {IMPORT_DATE_FIELD: {"$exists": False}}]},
+        sort=[("_id", 1)],
+    )
+    if not header_doc:
+        raise HTTPException(
+            status_code=404,
+            detail="Cabeçalho da lista de telefones não encontrado. Importe primeiro uma planilha na Lista de telefones.",
+        )
+    header_values = header_doc.get("values") or []
+    motorista_idx, hub_idx, contato_idx = _indices_contato(header_values)
+    data_idx = _indices_data(header_values)
+    if motorista_idx is None or hub_idx is None or contato_idx is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Cabeçalho deve ter colunas Motorista, HUB e Contato.",
+        )
+    motorista = body.motorista.strip()
+    base = (body.base or "").strip()
+    contato = (body.contato or "").strip()
+
+    header_id = header_doc["_id"]
+    query = {
+        USER_ID_FIELD: user_id,
+        "_id": {"$ne": header_id},
+        f"values.{motorista_idx}": motorista,
+        f"values.{hub_idx}": base,
+    }
+    existing = col.find_one(query, sort=[("_id", 1)])
+    if existing:
+        result = col.update_one(
+            {"_id": existing["_id"], USER_ID_FIELD: user_id},
+            {"$set": {f"values.{contato_idx}": contato}},
+        )
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Registro não encontrado.")
+        return {"created": False, "_id": str(existing["_id"])}
+
+    # Nova linha: mesmo padrão da coleção (Data, Motorista, Status, Cidade, HUB, Contato)
+    now = datetime.now(timezone.utc)
+    import_date_str = now.strftime("%Y-%m-%d")
+    data_br = now.strftime("%d/%m/%Y")
+    n = len(header_values)
+    values = [""] * n
+    values[motorista_idx] = motorista
+    values[hub_idx] = base
+    values[contato_idx] = contato
+    if data_idx is not None:
+        values[data_idx] = data_br
+    new_doc = {
+        USER_ID_FIELD: user_id,
+        "values": values,
+        "createdAt": now,
+        IMPORT_DATE_FIELD: import_date_str,
+    }
+    ins = col.insert_one(new_doc)
+    return {"created": True, "_id": str(ins.inserted_id)}
 
 
 def _verificar_senha_e_obter_usuario(db, user_id: str, senha: str) -> dict:

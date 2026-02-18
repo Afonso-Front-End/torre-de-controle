@@ -7,7 +7,7 @@ import { MdSettings, MdMessage, MdDownload, MdEdit, MdCheck } from 'react-icons/
 import * as XLSX from 'xlsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { overlayVariants, modalContentVariants, transition } from '../../../../utils/animations'
-import { getSLANaoEntregues, getSLAEntradaGalpao, getSLAEntregues, getContatoListaTelefones, updateContatoListaTelefones, updateConfig } from '../../../../services'
+import { getSLANaoEntregues, getSLAEntradaGalpao, getSLAEntregues, getContatoListaTelefones, updateContatoListaTelefones, upsertContatoListaTelefones, updateConfig } from '../../../../services'
 import { useNotification } from '../../../../context/NotificationContext'
 import { useAppContext } from '../../../../context'
 import './SLANaoEntreguesModal.css'
@@ -297,20 +297,30 @@ export default function SLANaoEntreguesModal({
   }, [token, motorista, base])
 
   const handleSaveContato = useCallback(async () => {
-    if (!token || !contatoDocId) return
+    if (!token || !motorista?.trim()) return
     const formatted = formatarTelefoneComNove(telefone)
+    const baseVal = (base || '(sem base)').trim()
     setSavingContato(true)
     try {
-      await updateContatoListaTelefones(token, contatoDocId, formatted)
-      setTelefone(formatted)
-      setPhoneEditing(false)
-      showNotification('Telefone atualizado.', 'success')
+      if (contatoDocId) {
+        await updateContatoListaTelefones(token, contatoDocId, formatted)
+        setTelefone(formatted)
+        setPhoneEditing(false)
+        showNotification('Telefone atualizado.', 'success')
+      } else {
+        await upsertContatoListaTelefones(token, motorista.trim(), baseVal, formatted)
+        setTelefone(formatted)
+        setPhoneEditing(false)
+        const res = await getContatoListaTelefones(token, motorista.trim(), baseVal)
+        setContatoDocId(res._id ?? null)
+        showNotification('Telefone guardado na lista de telefones.', 'success')
+      }
     } catch (err) {
-      showNotification(err.message || 'Não foi possível atualizar o telefone.', 'error')
+      showNotification(err.message || 'Não foi possível guardar o telefone.', 'error')
     } finally {
       setSavingContato(false)
     }
-  }, [token, contatoDocId, telefone, showNotification])
+  }, [token, contatoDocId, motorista, base, telefone, showNotification])
 
   const handleOpenWhatsApp = useCallback(() => {
     const num = telefoneParaWhatsApp(telefone)
@@ -502,10 +512,10 @@ export default function SLANaoEntreguesModal({
                           id="sla-nao-entregues-phone"
                           type="tel"
                           className="sla-nao-entregues-modal__phone-input"
-                          placeholder="Telefone"
+                          placeholder={contatoDocId ? 'Telefone' : 'Adicionar número (guardar na lista de telefones)'}
                           value={telefone}
                           onChange={(e) => setTelefone(e.target.value)}
-                          readOnly={!phoneEditing}
+                          readOnly={!!contatoDocId && !phoneEditing}
                           aria-label="Telefone"
                         />
                         {contatoDocId && !phoneEditing && (
@@ -519,12 +529,12 @@ export default function SLANaoEntreguesModal({
                             <MdEdit className="sla-nao-entregues-modal__action-icon" aria-hidden />
                           </button>
                         )}
-                        {phoneEditing && (
+                        {(!contatoDocId || phoneEditing) && (
                           <button
                             type="button"
                             className="sla-nao-entregues-modal__action-btn sla-nao-entregues-modal__phone-save-btn"
-                            title="Guardar telefone"
-                            aria-label="Guardar telefone"
+                            title={contatoDocId ? 'Guardar telefone' : 'Guardar número na lista de telefones'}
+                            aria-label={contatoDocId ? 'Guardar telefone' : 'Guardar número na lista de telefones'}
                             disabled={savingContato}
                             onClick={handleSaveContato}
                           >

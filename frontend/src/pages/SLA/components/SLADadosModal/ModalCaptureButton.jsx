@@ -46,6 +46,15 @@ export default function ModalCaptureButton({
         logging: false,
 
         onclone: (clonedDoc) => {
+          // Com zoom do navegador, o clone herda zoom e quebra dimensões. Força 1:1 no clone.
+          const root = clonedDoc.documentElement
+          const body = clonedDoc.body
+          if (root) {
+            root.style.zoom = '1'
+            root.style.transform = 'none'
+          }
+          if (body) body.style.zoom = '1'
+
           const clonedModal = clonedDoc.querySelector('.sla-dados-modal')
           const clonedBody = clonedDoc.querySelector('.sla-dados-modal__body')
           const clonedScrollWrap = clonedDoc.querySelector('.sla-dados-modal__motoristas-wrap--scroll')
@@ -72,8 +81,9 @@ export default function ModalCaptureButton({
             clonedModal.style.minHeight = `${h}px`
             clonedModal.style.maxHeight = 'none'
             clonedModal.style.overflow = 'visible'
-            clonedModal.style.margin = '0' // Remove margens de centralização se houver
+            clonedModal.style.margin = '0'
             clonedModal.style.paddingBottom = '0'
+            clonedModal.style.transform = 'none'
           }
         },
       })

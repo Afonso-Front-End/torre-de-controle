@@ -1,0 +1,17 @@
+.modal-capture-btn {
+  flex-shrink: 0;
+  padding: 0.4rem;
+  color: #d1d5db;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-capture-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}

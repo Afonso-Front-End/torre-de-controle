@@ -1,0 +1,44 @@
+.sla-import-drop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 400px;
+  min-height: 200px;
+  padding: 0.625rem 1rem;
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #333;
+  background: #fff;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.sla-import-drop:hover:not(.sla-import-drop--uploading) {
+  border-color: #999;
+  background: #f9f9f9;
+}
+
+.sla-import-drop--uploading {
+  cursor: wait;
+  color: #666;
+}
+
+.sla-import-drop__input {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.sla-import-drop__icon {
+  font-size: 1.125rem;
+  color: inherit;
+}
+
+.sla-import-drop__text {
+  font-weight: 500;
+}

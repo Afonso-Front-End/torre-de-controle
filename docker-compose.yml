@@ -1,0 +1,52 @@
+# Torre de Controle – orquestração local
+# Uso: docker compose up -d
+# Atualização: docker compose pull && docker compose up -d
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: torre-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: torre-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      MONGO_URI: mongodb://mongodb:27017
+      MONGO_DB_NAME: torre_de_controle
+      CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production-use-secrets-token-hex-32}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+      args:
+        # URL que o navegador usa para chamar a API (ajuste se usar outro host/porta)
+        VITE_API_URL: http://localhost:8000
+    container_name: torre-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongodb_data:

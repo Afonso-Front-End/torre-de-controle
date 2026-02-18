@@ -1,0 +1,58 @@
+.evolucao__chart-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+}
+
+.evolucao__chart-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #0f172a;
+  flex-shrink: 0;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  line-height: 1.35;
+}
+
+.evolucao__chart-wrap {
+  flex: 1;
+  min-height: 0;
+}
+
+.evolucao__chart-wrap--bar {
+  min-height: 260px;
+}
+
+.evolucao__chart-wrap--pie {
+  min-height: 260px;
+}
+
+.evolucao__chart-wrap--motoristas {
+  flex: 1;
+  min-height: 280px;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.evolucao__chart-wrap--lines {
+  flex: 1;
+  min-height: 280px;
+  min-width: 0;
+}
+
+.evolucao__chart-empty {
+  margin: 0;
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9375rem;
+}

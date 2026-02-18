@@ -1,0 +1,68 @@
+/* Evolução – página: layout, loading, error, grid de gráficos */
+.evolucao {
+  width: 100%;
+  min-height: 100%;
+  padding: 1.5rem 1.75rem;
+  box-sizing: border-box;
+  background: #f8fafc;
+}
+
+.evolucao__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.evolucao__loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2.5rem;
+  color: #64748b;
+  font-size: 0.9375rem;
+}
+
+.evolucao__spinner {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: evolucao-spin 0.7s linear infinite;
+}
+
+@keyframes evolucao-spin {
+  to { transform: rotate(360deg); }
+}
+
+.evolucao__error {
+  padding: 1rem 1.25rem;
+  background: #fef2f2;
+  color: #b91c1c;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+}
+
+.evolucao__charts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .evolucao__charts {
+    grid-template-columns: 1fr;
+  }
+}
+
+.evolucao .chartjs-tooltip {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}

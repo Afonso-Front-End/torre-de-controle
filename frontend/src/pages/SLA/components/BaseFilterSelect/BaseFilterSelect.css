@@ -1,0 +1,107 @@
+.base-filter-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.base-filter-select__label {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #555);
+}
+
+.base-filter-select__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 10rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-primary, #1a1a1a);
+  background: var(--input-bg, #fff);
+  border: 1px solid var(--input-border, #ccc);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.base-filter-select__trigger:hover:not(:disabled) {
+  border-color: var(--input-border-hover, #888);
+}
+
+.base-filter-select__trigger:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.base-filter-select__value {
+  color: var(--text-primary, #1a1a1a);
+}
+
+.base-filter-select__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  margin-top: 2px;
+  min-width: 14rem;
+  max-height: 18rem;
+  overflow: auto;
+  background: var(--dropdown-bg, #fff);
+  border: 1px solid var(--input-border, #ccc);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.base-filter-select__list {
+  padding: 0.25rem 0;
+}
+
+.base-filter-select__option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  text-align: left;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.base-filter-select__option:hover {
+  background: #f3f4f6;
+}
+
+.base-filter-select__option--selected {
+  background: #eff6ff;
+}
+
+.base-filter-select__option-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+}
+
+.base-filter-select__option-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.base-filter-select__clear {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #6b7280;
+  background: #f9fafb;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  cursor: pointer;
+}
+
+.base-filter-select__clear:hover {
+  background: #f3f4f6;
+  color: #374151;
+}

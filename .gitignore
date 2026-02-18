@@ -1,0 +1,18 @@
+# Executável gerado (não versionar o .exe)
+build/dist/
+
+# Ambiente e cache Python (raiz)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Logs e SO
+*.log
+.DS_Store
+Thumbs.db
+
+# Cursor/IDE (opcional)
+.cursor/

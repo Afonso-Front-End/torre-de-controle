@@ -1,0 +1,869 @@
+/* Consultar pedidos – layout base e loader */
+.consultar-pedidos {
+  width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+}
+
+.consultar-pedidos--with-loader {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.consultar-pedidos--tabela {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.consultar-pedidos--with-loader .consultar-pedidos__enviar {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Toolbar */
+.consultar-pedidos__toolbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.consultar-pedidos__search-wrap {
+  flex: 1;
+  max-width: 420px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.consultar-pedidos__toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.consultar-pedidos__btn-config {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  font-size: 1.125rem;
+  color: #374151;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.consultar-pedidos__btn-config:hover {
+  color: #111;
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.consultar-pedidos__btn-config-icon {
+  flex-shrink: 0;
+}
+
+.consultar-pedidos__header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.consultar-pedidos__btn-config--header {
+  width: auto;
+  height: auto;
+  padding: 0.4rem 0.75rem;
+  gap: 0.35rem;
+}
+
+.consultar-pedidos__btn-config-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.consultar-pedidos__select-colecao {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #111;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.consultar-pedidos__btn-enviar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: #fff;
+  background: #1f2937;
+  border: 1px solid #1f2937;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.consultar-pedidos__btn-enviar:hover:not(:disabled) {
+  background: #374151;
+  border-color: #374151;
+}
+
+.consultar-pedidos__btn-enviar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.consultar-pedidos__btn-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-family: inherit;
+  color: inherit;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.consultar-pedidos__btn-delete-icon {
+  font-size: 1.125rem;
+}
+
+.consultar-pedidos__btn-delete:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.consultar-pedidos__btn-delete:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Header da página (sem dados) */
+.consultar-pedidos__header {}
+
+.consultar-pedidos__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #171717;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.consultar-pedidos__desc {
+  font-size: 0.875rem;
+  color: #737373;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Área de import (drop) */
+.consultar-pedidos__enviar {
+  height: calc(100% - 90px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.consultar-pedidos__drop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 400px;
+  min-height: 200px;
+  padding: 0.625rem 1rem;
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #333;
+  background: #fff;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.consultar-pedidos__drop:hover:not(.consultar-pedidos__drop--uploading) {
+  border-color: #999;
+  background: #f9f9f9;
+}
+
+.consultar-pedidos__drop--uploading {
+  cursor: wait;
+  color: #666;
+}
+
+.consultar-pedidos__input {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.consultar-pedidos__drop-icon {
+  font-size: 1.125rem;
+  color: inherit;
+}
+
+.consultar-pedidos__drop-text {
+  font-weight: 500;
+}
+
+/* Área de conteúdo quando há dados (tabela usa o mesmo design de Verificar pedidos) */
+.consultar-pedidos__content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.consultar-pedidos__content .data-table {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Área que faz scroll com TODOS os grupos (todos os responsáveis) */
+.consultar-pedidos__content .data-table__wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
+}
+
+/* Thead: overflow visible para a borda da coluna ID não ser cortada */
+.consultar-pedidos .data-table__wrap .data-table__table thead {
+  overflow: visible;
+}
+
+/* Thead: borda inferior com box-shadow para não sumir ao scroll (como na coluna ID) */
+.consultar-pedidos .data-table__wrap .data-table__table thead th {
+  box-shadow: inset 0 -2px 0 0 #e5e7eb;
+}
+
+/* Coluna seleção fixa (sticky) – à esquerda */
+.consultar-pedidos .data-table__wrap .data-table__table .data-table__th-select {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #fff;
+  box-shadow: inset 0 -2px 0 0 #e5e7eb, inset -1px 0 0 0 #e5e7eb;
+}
+
+.consultar-pedidos .data-table__wrap .data-table__table .data-table__td-select {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: #fff;
+  box-shadow: inset -1px 0 0 0 #e5e7eb;
+}
+
+/* Coluna ID fixa (sticky) – ao lado da seleção */
+.consultar-pedidos .data-table__wrap .data-table__table .data-table__th-id {
+  position: sticky;
+  left: 3rem;
+  z-index: 2;
+  background: #fff;
+  box-shadow: inset 0 -2px 0 0 #e5e7eb, inset -1px 0 0 0 #e5e7eb;
+}
+
+.consultar-pedidos .data-table__wrap .data-table__table .data-table__td-id {
+  position: sticky;
+  left: 3rem;
+  z-index: 1;
+  background: #fff;
+  box-shadow: inset -1px 0 0 0 #e5e7eb;
+}
+
+/* Remove a borda de cima da primeira linha do tbody (evita linha dupla com o thead) */
+.consultar-pedidos .data-table__wrap .data-table__table tbody tr:first-child td {
+  border-top: none;
+}
+
+/* A partir da 4.ª coluna (dados): texto não quebra (1=select, 2=ID, 3+=dados) */
+.consultar-pedidos .data-table__wrap .data-table__table thead th:nth-child(n + 4),
+.consultar-pedidos .data-table__wrap .data-table__table tbody td:nth-child(n + 4) {
+  white-space: nowrap;
+}
+
+/* Barra de filtros (pills + dropdown — mesmo design da Lista de Telefones) */
+.consultar-pedidos__filters {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.consultar-pedidos__filter-wrap {
+  position: relative;
+}
+
+.consultar-pedidos__filter-pill {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.consultar-pedidos__filter-pill--active {
+  background: #1f2937;
+  color: #fff;
+  border: none;
+}
+
+.consultar-pedidos__filter-pill--inactive {
+  background: #fafafa;
+  color: #111;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.consultar-pedidos__filter-pill-label {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.consultar-pedidos__filter-pill-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.consultar-pedidos__filter-pill-remove:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.consultar-pedidos__filter-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
+.consultar-pedidos__filter-pill-arrow {
+  flex-shrink: 0;
+  color: #6b7280;
+}
+
+/* Dropdown do filtro */
+.consultar-pedidos__filter-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  margin-top: 0.5rem;
+  width: 320px;
+  height: 320px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.consultar-pedidos__filter-dropdown--menu {
+  display: block;
+}
+
+/* Dropdown ancorado ao th (position: fixed) */
+.consultar-pedidos__filter-dropdown--fixed {
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  height: 320px;
+  overflow: hidden;
+}
+
+.consultar-pedidos__filter-dropdown-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: inherit;
+}
+
+.consultar-pedidos__filter-dropdown-search-wrap {
+  flex-shrink: 0;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.consultar-pedidos__filter-dropdown-search {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  color: #111;
+  background: #f9f9f9;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.consultar-pedidos__filter-dropdown-search::placeholder {
+  color: #9ca3af;
+}
+
+.consultar-pedidos__filter-dropdown-search:focus {
+  outline: none;
+  border-color: #d1d5db;
+  background: #fff;
+}
+
+.consultar-pedidos__filter-dropdown-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.consultar-pedidos__filter-dropdown-footer {
+  flex-shrink: 0;
+  padding: 0.5rem;
+  border-top: 1px solid #eee;
+  border-radius: 0 0 10px 10px;
+}
+
+.consultar-pedidos__filter-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  height: 100%;
+  min-height: 200px;
+  padding: 1rem;
+}
+
+.consultar-pedidos__filter-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #1f2937;
+  border-radius: 50%;
+  animation: consultar-pedidos-spin 0.7s linear infinite;
+}
+
+.consultar-pedidos__filter-loading-text {
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+@keyframes consultar-pedidos-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.consultar-pedidos__filter-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.consultar-pedidos__filter-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  font-family: inherit;
+  color: #2d2d2d;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  border-radius: 14px;
+}
+
+.consultar-pedidos__filter-menu-item:hover {
+  background: #f0f0f0;
+}
+
+.consultar-pedidos__filter-menu-item--selected .consultar-pedidos__filter-menu-icon {
+  color: #1f2937;
+}
+
+.consultar-pedidos__filter-menu-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: #4a4a4a;
+}
+
+.consultar-pedidos__filter-menu-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.consultar-pedidos__filter-menu-separator {
+  height: 1px;
+  margin: 0 1rem 0.5rem;
+  background: #e8e8e8;
+}
+
+.consultar-pedidos__filter-dropdown-footer .consultar-pedidos__filter-menu-item--action:hover {
+  background: #e5e5e5;
+}
+
+.consultar-pedidos__filter-menu-item--action .consultar-pedidos__filter-menu-icon {
+  color: #5a5a5a;
+}
+
+/* Wrapper da tabela + dropdown de filtro (clique no th) */
+.consultar-pedidos__table-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.consultar-pedidos__data-table--full {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.consultar-pedidos__data-table--full .data-table__wrap {
+  max-height: calc(100vh - 100px);
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.consultar-pedidos__placeholder {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: #6b7280;
+}
+
+/* Linha de grupo por Responsável pela entrega */
+.consultar-pedidos__data-table .data-table__group-header td {
+  background: #f3f4f6;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-top: 2px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.consultar-pedidos__group-total {
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.consultar-pedidos__data-table .data-table__pagination--summary {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Linha do motorista clicável */
+.consultar-pedidos__motorista-row {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.consultar-pedidos__motorista-row:hover {
+  background: #f3f4f6;
+}
+
+/* Modal com dados do motorista */
+.consultar-pedidos__modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.consultar-pedidos__modal {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.consultar-pedidos__modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.consultar-pedidos__modal-header h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.consultar-pedidos__modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #6b7280;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.consultar-pedidos__modal-close:hover {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.consultar-pedidos__modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.consultar-pedidos__modal-table-wrap {
+  overflow: auto;
+  max-height: calc(90vh - 120px);
+}
+
+.consultar-pedidos__modal-table {
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.consultar-pedidos__modal-table th,
+.consultar-pedidos__modal-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.consultar-pedidos__modal-table thead th {
+  background: #f9fafb;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Botão filtro (Base / Motorista) */
+.consultar-pedidos__filter-wrap {
+  position: relative;
+}
+
+.consultar-pedidos__btn-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-family: inherit;
+  color: inherit;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.consultar-pedidos__btn-filter:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.consultar-pedidos__btn-filter:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.consultar-pedidos__filter-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 140px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  z-index: 20;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.consultar-pedidos__filter-option {
+  display: block;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  text-align: left;
+  color: #111;
+  background: #fff;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.consultar-pedidos__filter-option:hover {
+  background: #f3f4f6;
+}
+
+/* Modal de confirmação de exclusão */
+.consultar-pedidos__confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.consultar-pedidos__confirm-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem 1.75rem;
+  max-width: 400px;
+  width: 100%;
+}
+
+.consultar-pedidos__confirm-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.25rem 0;
+}
+
+.consultar-pedidos__confirm-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 1.25rem 0;
+}
+
+.consultar-pedidos__confirm-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.consultar-pedidos__confirm-btn {
+  flex: 1;
+  max-width: 140px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.consultar-pedidos__confirm-btn--secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.consultar-pedidos__confirm-btn--secondary:hover {
+  background: #e5e7eb;
+}
+
+.consultar-pedidos__confirm-btn--primary {
+  background: #111;
+  color: #fff;
+  border: none;
+}
+
+.consultar-pedidos__confirm-btn--primary:hover:not(:disabled) {
+  background: #262626;
+}
+
+.consultar-pedidos__confirm-btn--primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

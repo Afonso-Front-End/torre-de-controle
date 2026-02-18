@@ -1,0 +1,190 @@
+.sla-performance-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.25rem;
+}
+
+.sla-performance-modal {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18);
+  max-width: 420px;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sla-performance-modal--with-table {
+  max-width: min(720px, 92vw);
+  max-height: 90vh;
+}
+
+.sla-performance-modal__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sla-performance-modal__title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.sla-performance-modal__close {
+  flex-shrink: 0;
+  padding: 0.4rem;
+  color: #6b7280;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.sla-performance-modal__close:hover {
+  color: #111;
+  background: #f3f4f6;
+}
+
+.sla-performance-modal__body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.sla-performance-modal__cidades-label {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #6b7280;
+  font-weight: 500;
+  text-align: center;
+  max-width: 100%;
+}
+
+.sla-performance-modal__body .sla__loading-text,
+.sla-performance-modal__body .sla__layout-card-empty {
+  margin: 0;
+}
+
+.sla-performance-modal__card {
+  width: 100%;
+  max-width: 320px;
+}
+
+.sla-performance-modal__table-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-self: stretch;
+}
+
+.sla-performance-modal__table-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.sla-performance-modal__table-wrap {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: auto;
+  max-height: 40vh;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.sla-performance-modal__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.sla-performance-modal__table th,
+.sla-performance-modal__table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.sla-performance-modal__table th {
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: #111827;
+  background: #f3f4f6;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.sla-performance-modal__th-center {
+  text-align: center;
+}
+
+.sla-performance-modal__th-motorista,
+.sla-performance-modal__th-cidades {
+  text-align: left;
+}
+
+.sla-performance-modal__table-cell--center {
+  text-align: center;
+}
+
+.sla-performance-modal__table tbody tr:hover td {
+  background: #f9fafb;
+}
+
+.sla-performance-modal__table-num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #374151;
+}
+
+.sla-performance-modal__table-nome {
+  font-weight: 600;
+  color: #111827;
+}
+
+.sla-performance-modal__table-pct {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.sla-performance-modal__table-pct--ok {
+  color: #059669;
+}
+
+.sla-performance-modal__table-pct--medio {
+  color: #d97706;
+}
+
+.sla-performance-modal__table-pct--baixo {
+  color: #dc2626;
+}
+
+.sla-performance-modal__table-cidades {
+  max-width: 180px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  white-space: normal;
+  line-height: 1.3;
+}

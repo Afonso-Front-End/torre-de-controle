@@ -1,0 +1,186 @@
+/* Overlay ajustado para facilitar a captura */
+.sla-dados-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-start; /* Alinhamento no topo ajuda no cálculo de altura do JS */
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.25rem;
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Modal ajustado: removido margin auto para evitar sobras laterais na captura */
+.sla-dados-modal {
+  box-sizing: border-box;
+  background-color: #fff;
+  background-clip: border-box;
+  overflow: visible;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18);
+  width: 100%;
+  min-width: min(1500px, 92vw);
+  max-width: min(1500px, 95vw);
+  max-height: none;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  /* Margem fixa em vez de auto evita que o Canvas capture o 'vazio' ao redor */
+  margin: 2rem 0; 
+  position: relative;
+}
+
+.sla-dados-modal__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #262626;
+}
+
+.sla-dados-modal__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.02em;
+  font-family: inherit;
+}
+
+.sla-dados-modal__logo-jt {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.sla-dados-modal__logo-express {
+  color: #e53935;
+  text-shadow: 0 0 8px rgba(229, 57, 53, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.sla-dados-modal__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sla-dados-modal__close {
+  flex-shrink: 0;
+  padding: 0.4rem;
+  color: #d1d5db;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+  display: flex;
+}
+
+.sla-dados-modal__header .sla-dados-modal__close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.sla-dados-modal__body {
+  flex: 0 0 auto;
+  min-height: auto;
+  padding: 1.25rem;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sla-dados-modal__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sla-dados-modal__section--motoristas {
+  flex: 0 0 auto;
+  min-height: auto;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+}
+
+.sla-dados-modal__section-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* Tabelas: Removido 'sticky' pois buga a renderização do html2canvas */
+.sla-dados-modal__base-wrap,
+.sla-dados-modal__motoristas-wrap {
+  border: 1px solid #d1d5db;
+  overflow: visible;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  flex: 0 0 auto;
+}
+
+.sla-dados-modal__base-table,
+.sla-dados-modal__motoristas-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.sla-dados-modal__base-table th,
+.sla-dados-modal__motoristas-table th {
+  padding: 0.56rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: #111827;
+  background: #f3f4f6;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  /* Nota: position sticky removido para compatibilidade com captura */
+}
+
+.sla-dados-modal__base-table td,
+.sla-dados-modal__motoristas-table td {
+  padding: 0.56rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sla-dados-modal__motoristas-table tbody tr:hover td {
+  background: #f0f9ff;
+}
+
+.sla-dados-modal__base-num,
+.sla-dados-modal__motoristas-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #374151;
+}
+
+.sla-dados-modal__motoristas-cidades {
+  max-width: none;
+  min-width: 120px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  white-space: normal;
+  line-height: 1.35;
+}
+
+/* Ajustes auxiliares para Percentual */
+.sla-dados-modal__pct-wrap {
+  display: inline-flex;
+}
+
+.sla-dados-modal__pct-wrap--ok { color: #059669; --sla-pct-fill: #059669; }
+.sla-dados-modal__pct-wrap--medio { color: #d97706; --sla-pct-fill: #d97706; }
+.sla-dados-modal__pct-wrap--baixo { color: #dc2626; --sla-pct-fill: #dc2626; }

@@ -1,0 +1,115 @@
+.date-filter-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  /* gap: 0.5rem; */
+}
+
+.date-filter-select__label {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #555);
+}
+
+.date-filter-select__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 10rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-primary, #1a1a1a);
+  background: var(--input-bg, #fff);
+  border: 1px solid var(--input-border, #ccc);
+  cursor: pointer;
+}
+
+.date-filter-select__trigger:hover:not(:disabled) {
+  border-color: var(--input-border-hover, #888);
+}
+
+.date-filter-select__trigger:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.date-filter-select__trigger-icon {
+  flex-shrink: 0;
+}
+
+.date-filter-select__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  margin-top: 2px;
+  min-width: 12rem;
+  max-height: 18rem;
+  overflow: auto;
+  background: var(--dropdown-bg, #fff);
+  border: 1px solid var(--input-border, #ccc);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: auto;
+}
+
+.date-filter-select__actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--input-border, #eee);
+}
+
+.date-filter-select__action-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--link-color, #0066cc);
+  background: none;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.date-filter-select__action-btn:hover {
+  text-decoration: underline;
+}
+
+.date-filter-select__list {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+}
+
+.date-filter-select__option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary, #1a1a1a);
+  pointer-events: auto;
+}
+
+.date-filter-select__option:hover {
+  background: var(--hover-bg, #f0f0f0);
+}
+
+.date-filter-select__option--selected {
+  background: var(--selected-bg, #e8f0fe);
+}
+
+.date-filter-select__option-check {
+  flex-shrink: 0;
+  display: inline-flex;
+}
+
+.date-filter-select__empty {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #666);
+}

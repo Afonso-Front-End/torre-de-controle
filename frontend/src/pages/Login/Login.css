@@ -1,0 +1,239 @@
+.login-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  /* background-color: #E7E7E7; */
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  height: 750px;
+  padding: 2.5rem;
+  background: #ffffff;
+  border-radius: 0;
+  box-shadow: 0 0px 6px rgba(0, 0, 0, 0.192);
+  /* border: 2px solid #E7E7E7; */
+}
+
+.login-page .login-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 0.5rem 0;
+  text-align: left;
+}
+
+.login-page .login-subtitle {
+  font-size: 0.9rem;
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+
+.login-page .login-link {
+  color: #111;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.login-page .login-link:hover {
+  color: #374151;
+}
+
+.login-page .login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-page .login-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-page .login-input-wrap .login-icon {
+  position: absolute;
+  left: 1rem;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.login-page .login-input-wrap .login-input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border-radius: 4px;
+  border: none;
+  border-radius: 10px;
+  background: #F7F7F7;
+  color: #111;
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.login-page .login-input-wrap.has-toggle .login-input {
+  padding-right: 3rem;
+}
+
+.login-page .login-input-wrap .login-input:focus {
+  outline: none;
+  border-color: #6b7280;
+}
+
+.login-page .login-input-wrap .login-input::placeholder {
+  color: #9ca3af;
+}
+
+.login-page .login-input-wrap .login-toggle {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-page .login-input-wrap .login-toggle:hover {
+  color: #6b7280;
+}
+
+.login-page .login-forgot {
+  font-size: 0.875rem;
+  color: #374151;
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+.login-page .login-forgot:hover {
+  text-decoration: underline;
+}
+
+.login-page .login-erro {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #dc2626;
+}
+
+.login-page .login-button {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  background: #111;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.25rem;
+}
+
+.login-page .login-button:hover {
+  background: #374151;
+}
+
+.login-page .login-separator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.login-page .login-separator::before,
+.login-page .login-separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.login-page .login-social {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.login-page .login-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #111;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.login-page .login-social-btn:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.login-page .login-social-btn.login-social-google {
+  color: #374151;
+}
+
+.login-page .login-social-btn.login-social-facebook {
+  background: #1877f2;
+  border-color: #1877f2;
+  color: #fff;
+}
+
+.login-page .login-social-btn.login-social-facebook .login-social-icon {
+  color: #fff;
+}
+
+.login-page .login-social-btn.login-social-x {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+}
+
+.login-page .login-social-btn.login-social-x .login-social-icon {
+  color: #fff;
+}
+
+.login-page .login-social-btn.login-social-apple {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+}
+
+.login-page .login-social-btn.login-social-apple .login-social-icon {
+  color: #fff;
+}
+
+.login-page .login-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.login-page .login-footer a {
+  color: #111;
+  text-decoration: underline;
+}
+
+.login-page .login-footer a:hover {
+  color: #374151;
+}

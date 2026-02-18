@@ -1,0 +1,102 @@
+.sla-indicadores {
+  flex-shrink: 0;
+  margin-bottom: 1.5rem;
+}
+
+.sla-indicadores__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #171717;
+  margin: 0 0 1rem 0;
+}
+
+.sla-indicadores__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .sla-indicadores__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sla-indicadores__card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  overflow: hidden;
+}
+
+.sla-indicadores__card-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.75rem 0;
+}
+
+.sla-indicadores__loading,
+.sla-indicadores__empty {
+  font-size: 0.875rem;
+  color: #737373;
+  margin: 0;
+}
+
+.sla-indicadores__table-wrap {
+  overflow-x: auto;
+}
+
+.sla-indicadores__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.sla-indicadores__th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.sla-indicadores__th--nome {
+  min-width: 120px;
+}
+
+.sla-indicadores__th--pct {
+  text-align: right;
+}
+
+.sla-indicadores__td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+}
+
+.sla-indicadores__td--nome {
+  font-weight: 500;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sla-indicadores__td--pct {
+  text-align: right;
+  font-weight: 600;
+}
+
+.sla-indicadores__pct--ok {
+  color: #059669;
+}
+
+.sla-indicadores__pct--medio {
+  color: #d97706;
+}
+
+.sla-indicadores__pct--baixo {
+  color: #dc2626;
+}

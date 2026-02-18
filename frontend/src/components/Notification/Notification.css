@@ -1,0 +1,128 @@
+.notification {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  max-width: 360px;
+  padding: 1rem 1rem 1rem 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 9999;
+  font-family: 'Montserrat', sans-serif;
+  animation: notification-in 0.25s ease-out;
+}
+
+@keyframes notification-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.notification__icon-wrap {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notification__icon {
+  flex-shrink: 0;
+}
+
+.notification--neutral .notification__icon-wrap {
+  background: #e5e7eb;
+  color: #6b7280;
+}
+
+.notification--info .notification__icon-wrap {
+  background: #bfdbfe;
+  color: #2563eb;
+}
+
+.notification--success .notification__icon-wrap {
+  background: #bbf7d0;
+  color: #16a34a;
+}
+
+.notification--warning .notification__icon-wrap {
+  background: #fed7aa;
+  color: #ea580c;
+}
+
+.notification--error .notification__icon-wrap {
+  background: #fecaca;
+  color: #dc2626;
+}
+
+.notification--neutral {
+  background: #f9fafb;
+  color: #374151;
+}
+
+.notification--info {
+  background: #eff6ff;
+  color: #374151;
+}
+
+.notification--success {
+  background: #f0fdf4;
+  color: #374151;
+}
+
+.notification--warning {
+  background: #fff7ed;
+  color: #374151;
+}
+
+.notification--error {
+  background: #fef2f2;
+  color: #374151;
+}
+
+.notification__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #374151;
+}
+
+.notification__description {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #6b7280;
+}
+
+.notification__close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0.25rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin: -0.25rem -0.25rem 0 0;
+}
+
+.notification__close:hover {
+  color: #111;
+}

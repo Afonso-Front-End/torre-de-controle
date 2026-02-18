@@ -1,0 +1,227 @@
+.create-account-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.create-account-card {
+  width: 100%;
+  max-width: 400px;
+  height: 750px;
+  padding: 2.5rem;
+  background: #FFFFFF;
+  border-radius: 0;
+  box-shadow: 0 0px 6px rgba(0, 0, 0, 0.192);
+}
+
+.create-account-page .create-account-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 0.5rem 0;
+  text-align: left;
+}
+
+.create-account-page .create-account-subtitle {
+  font-size: 0.9rem;
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+
+.create-account-page .create-account-link {
+  color: #111;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.create-account-page .create-account-link:hover {
+  color: #374151;
+}
+
+.create-account-page .create-account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.create-account-page .create-account-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.create-account-page .create-account-input-wrap .create-account-icon {
+  position: absolute;
+  left: 1rem;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.create-account-page .create-account-input-wrap .create-account-input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: none;
+  border-radius: 10px;
+  background: #F7F7F7;
+  color: #111;
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.create-account-page .create-account-input-wrap.has-toggle .create-account-input {
+  padding-right: 3rem;
+}
+
+.create-account-page .create-account-input-wrap .create-account-input:focus {
+  outline: none;
+  border-color: #6b7280;
+  /* background: #fff; */
+}
+
+.create-account-page .create-account-input-wrap .create-account-input::placeholder {
+  color: #9ca3af;
+}
+
+.create-account-page .create-account-input--uppercase {
+  text-transform: uppercase;
+}
+
+.create-account-page .create-account-input--uppercase::placeholder {
+  text-transform: none;
+}
+
+.create-account-page .create-account-input-wrap .create-account-toggle {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.create-account-page .create-account-input-wrap .create-account-toggle:hover {
+  color: #6b7280;
+}
+
+.create-account-page .create-account-erro {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #dc2626;
+}
+
+.create-account-page .create-account-button {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  background: #111;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.25rem;
+}
+
+.create-account-page .create-account-button:hover {
+  background: #374151;
+}
+
+.create-account-page .create-account-separator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.create-account-page .create-account-separator::before,
+.create-account-page .create-account-separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.create-account-page .create-account-social-label {
+  font-size: 0.875rem;
+  color: #374151;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.create-account-page .create-account-social-row {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.create-account-page .create-account-social-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #111;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.create-account-page .create-account-social-btn:hover {
+  background: #f3f4f6;
+  transform: scale(1.05);
+}
+
+.create-account-page .create-account-social-btn.create-account-social-google .create-account-social-icon {
+  color: inherit;
+}
+
+.create-account-page .create-account-social-btn.create-account-social-facebook {
+  background: #1877f2;
+  border-color: #1877f2;
+  color: #fff;
+}
+
+.create-account-page .create-account-social-btn.create-account-social-x {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+}
+
+.create-account-page .create-account-social-btn.create-account-social-apple {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+}
+
+.create-account-page .create-account-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.create-account-page .create-account-footer a {
+  color: #111;
+  text-decoration: underline;
+}
+
+.create-account-page .create-account-footer a:hover {
+  color: #374151;
+}

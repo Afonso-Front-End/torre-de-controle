@@ -1,0 +1,116 @@
+.evolucao__cards {
+  display: grid;
+  width: 100%;
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.evolucao__cards--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.evolucao__cards--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 900px) {
+  .evolucao__cards--3,
+  .evolucao__cards--4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.evolucao__card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 120px;
+  min-width: 0;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.evolucao__card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  border-color: #e2e8f0;
+  transform: translateY(-2px);
+}
+
+.evolucao__card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-bottom: 0.35rem;
+  transition: transform 0.2s ease;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.evolucao__card:hover .evolucao__card-icon {
+  transform: scale(1.05);
+}
+
+.evolucao__card--total .evolucao__card-icon {
+  color: #2563eb;
+}
+
+.evolucao__card--entregues .evolucao__card-icon {
+  color: #059669;
+}
+
+.evolucao__card--nao-entregues .evolucao__card-icon {
+  color: #dc2626;
+}
+
+.evolucao__card--outros .evolucao__card-icon {
+  color: #64748b;
+}
+
+.evolucao__card-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  min-width: 0;
+}
+
+.evolucao__card-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.evolucao__card-pct {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.evolucao__card-pct--positive {
+  color: #047857;
+  background: #d1fae5;
+}
+
+.evolucao__card-pct--negative {
+  color: #b91c1c;
+  background: #fee2e2;
+}

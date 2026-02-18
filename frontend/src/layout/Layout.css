@@ -1,0 +1,39 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.layout__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.layout__main {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  /* padding: 0.25rem 0.5rem; */
+}
+
+/* Para o overlay de loading global cobrir só a área do conteúdo */
+.layout__main--relative {
+  position: relative;
+}
+
+.layout__global-loader {
+  position: absolute;
+  z-index: 100;
+}
+
+/* Página Lista de telefones (tabela): ocupa altura disponível para cálculo certinho */
+.layout__main > .lista-telefones--tabela {
+  flex: 1 1 auto;
+  min-height: 0;
+}

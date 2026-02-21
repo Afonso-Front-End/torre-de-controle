@@ -1,5 +1,6 @@
 @echo off
 REM Script de build para Windows
+setlocal
 echo ========================================
 echo Torre de Controle - Build Executavel
 echo ========================================
@@ -9,7 +10,13 @@ cd /d "%~dp0"
 
 REM 1. Build do Frontend React
 echo [1/5] Construindo frontend React...
-cd ..\frontend
+set "FRONTEND_DIR=%~dp0..\frontend"
+if not exist "%FRONTEND_DIR%\package.json" (
+    echo ERRO: Nao encontrado %FRONTEND_DIR%\package.json
+    pause
+    exit /b 1
+)
+pushd "%FRONTEND_DIR%"
 if not exist "node_modules" (
     echo Instalando dependencias do frontend...
     call npm install
@@ -17,17 +24,20 @@ if not exist "node_modules" (
 call npm run build
 if errorlevel 1 (
     echo ERRO: Falha ao construir frontend!
+    popd
     pause
     exit /b 1
 )
-cd ..\build
+popd
 
-REM 2. Instalar dependências Python
+REM 2. Instalar dependencias Python
 echo [2/5] Instalando dependencias Python...
-cd ..\server
+set "SERVER_DIR=%~dp0..\server"
+pushd "%SERVER_DIR%"
 python -m pip install -r requirements.txt --quiet
 if errorlevel 1 (
     echo ERRO: Falha ao instalar dependencias Python!
+    popd
     pause
     exit /b 1
 )
@@ -37,13 +47,15 @@ echo [3/5] Instalando PyInstaller...
 python -m pip install pyinstaller --quiet
 if errorlevel 1 (
     echo ERRO: Falha ao instalar PyInstaller!
+    popd
     pause
     exit /b 1
 )
 
-REM 4. Fechar executável existente se estiver rodando
+REM 4. Fechar executavel existente se estiver rodando
 echo [4/5] Verificando se executavel esta em uso...
-cd ..\build
+popd
+cd /d "%~dp0"
 tasklist /FI "IMAGENAME eq TorreDeControle.exe" 2>NUL | find /I /N "TorreDeControle.exe">NUL
 if "%ERRORLEVEL%"=="0" (
     echo Executavel encontrado em execucao. Tentando encerrar...
@@ -52,14 +64,14 @@ if "%ERRORLEVEL%"=="0" (
     echo Processo encerrado.
 )
 
-REM Remover executável antigo se existir
+REM Remover executavel antigo se existir
 if exist "dist\TorreDeControle.exe" (
     echo Removendo executavel antigo...
     del /F /Q "dist\TorreDeControle.exe" >NUL 2>&1
     timeout /t 1 /nobreak >NUL
 )
 
-REM 5. Criar executável
+REM 5. Criar executavel
 echo [5/5] Criando executavel...
 python -m PyInstaller build.spec --clean --noconfirm
 if errorlevel 1 (

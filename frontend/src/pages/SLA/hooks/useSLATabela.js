@@ -58,14 +58,14 @@ export default function useSLATabela(token, initialRowsPerPage) {
       try {
         const res = await getSLATabela(token, pageNum, rowsPerPage, datasParam)
         // Debug: verificar resposta da API
-        console.log('[useSLATabela] Resposta da API:', {
-          hasData: !!res.data,
-          dataLength: res.data?.length ?? 0,
-          total: res.total ?? 0,
-          hasHeader: !!res.header,
-          headerLength: res.header?.length ?? 0,
-          fullResponse: res
-        })
+        // console.log('[useSLATabela] Resposta da API:', {
+        //   hasData: !!res.data,
+        //   dataLength: res.data?.length ?? 0,
+        //   total: res.total ?? 0,
+        //   hasHeader: !!res.header,
+        //   headerLength: res.header?.length ?? 0,
+        //   fullResponse: res
+        // })
         const list = res.data || []
         const newTotal = res.total ?? 0
         setTotal(newTotal)

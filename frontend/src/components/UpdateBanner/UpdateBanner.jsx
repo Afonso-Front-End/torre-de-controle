@@ -49,7 +49,7 @@ export function UpdateBanner() {
     getCheckUpdate()
       .then((res) => {
         if (import.meta.env.DEV) {
-          console.log('[UpdateBanner] Resposta da API:', res)
+          // console.log('[UpdateBanner] Resposta da API:', res)
         }
         if (!res.has_update || !res.version) return
         if (compareVersions(res.version, current) <= 0) return

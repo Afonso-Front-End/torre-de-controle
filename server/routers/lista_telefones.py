@@ -16,6 +16,7 @@ from limiter import limiter
 from routers.auth import require_user_id
 from security import verify_password
 from table_ids import require_table_id
+from upload_limits import read_upload_with_limit
 
 router = APIRouter(prefix="/lista-telefones", tags=["lista-telefones"])
 COLLECTION = "lista_telefones"
@@ -114,7 +115,7 @@ async def salvar_lista(request: Request, file: UploadFile = File(...), user_id: 
     if not ext.endswith(".xlsx"):
         raise HTTPException(status_code=400, detail="Envie um arquivo .xlsx")
 
-    contents = await file.read()
+    contents = await read_upload_with_limit(file)
     try:
         rows = excel_para_linhas(contents)
     except Exception as e:

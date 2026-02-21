@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppContext } from '../../context'
 import './Header.css'
+import { Logo } from '../../components/Logo'
 
 function getAvatarUrl(user) {
   const url = user?.foto || user?.avatar || null
@@ -19,7 +20,8 @@ export function Header() {
   return (
     <header className="layout-header">
       <div className="layout-header__inner">
-        <span className="layout-header__title">Torre de Controle</span>
+        {/* <span className="layout-header__title">Torre de Controle</span> */}
+        <Logo></Logo>
         <Link to="/perfil" className="layout-header__profile" aria-label="Ver perfil">
           <span className="layout-header__profile-avatar">
             {showImg ? (

@@ -51,7 +51,13 @@ Aplicação web (React + FastAPI + MongoDB) para gestão de pedidos, SLA e lista
 | `server/.env`   | `MONGO_URI`, `MONGO_DB_NAME`, `SECRET_KEY`, `PORT`, `CORS_ORIGINS`, `GITHUB_REPO_OWNER`, `GITHUB_REPO_NAME` (para aviso de atualização) |
 | `frontend/.env` | `VITE_API_URL` (URL da API, ex.: `http://localhost:8000`) |
 
-O `server/.env` **não** deve ser commitado (deve estar no `.gitignore`). Quem clona o repositório cria o seu próprio `.env` a partir de um exemplo ou da documentação.
+O `server/.env` **não** deve ser commitado (está no `.gitignore`). Copie `server/.env.example` para `server/.env` e preencha; use uma **SECRET_KEY** forte (ex.: `openssl rand -hex 32`). Pode configurar `MAX_UPLOAD_MB` (limite de tamanho de uploads, default 25) e `HOST=127.0.0.1` para uso apenas local.
+
+---
+
+## Segurança
+
+O projeto inclui limite de tamanho de uploads, validação antes de processar ficheiros Excel, token de sessão no frontend (`sessionStorage`), servidor por defeito em `127.0.0.1` e headers de segurança (CSP, X-Frame-Options, etc.). Detalhes em **`docs/MELHORIAS-E-SEGURANCA.md`**.
 
 ---
 

@@ -16,6 +16,7 @@ from database import get_db, USER_ID_FIELD
 from routers.auth import require_user_id
 from table_ids import require_table_id
 from services import resultados_consulta as svc
+from upload_limits import read_upload_with_limit
 from schemas.resultados_consulta import ProcessarResultadosResponse, ListaMotoristaResponse, NumerosJmsResponse
 
 router = APIRouter(prefix="/resultados-consulta", tags=["resultados-consulta"])
@@ -331,7 +332,7 @@ async def atualizar_motorista_por_arquivo(
     if not ext.endswith(".xlsx"):
         raise HTTPException(status_code=400, detail="Envie um arquivo .xlsx")
 
-    contents = await file.read()
+    contents = await read_upload_with_limit(file)
     try:
         rows = svc.excel_para_linhas(contents)
     except Exception as e:

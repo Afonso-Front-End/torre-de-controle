@@ -3,7 +3,7 @@
  * Em produção (executável), usa http://127.0.0.1:8000
  * Em desenvolvimento, usa http://localhost:8000 ou VITE_API_URL do .env
  */
-const API_BASE = import.meta.env.PROD 
+const API_BASE = import.meta.env.PROD
   ? 'http://127.0.0.1:8000'
   : (import.meta.env.VITE_API_URL || 'http://localhost:8000')
 
@@ -45,14 +45,14 @@ async function request(path, options = {}, token, tableId) {
   }
   if (token) headers.Authorization = `Bearer ${token}`
   if (tableId != null) headers['X-Table-Id'] = String(tableId)
-  
+
   let res
   try {
     res = await fetch(url, { ...options, headers })
   } catch (err) {
     throw new Error(`Erro de rede: ${err.message || 'Não foi possível conectar ao servidor'}`)
   }
-  
+
   let data = {}
   let responseText = ''
   try {
@@ -72,7 +72,7 @@ async function request(path, options = {}, token, tableId) {
     console.error(`[api.request] Erro ao ler resposta de ${path}:`, textError)
     data = {}
   }
-  
+
   if (!res.ok) {
     if (res.status === 401 && typeof onUnauthorized === 'function') {
       onUnauthorized()
@@ -80,22 +80,22 @@ async function request(path, options = {}, token, tableId) {
     const message = data.detail || data.message || (res.status === 401 ? 'Sessão expirada. Faça login novamente.' : `Erro ${res.status}`)
     throw new Error(typeof message === 'string' ? message : message[0]?.msg || JSON.stringify(message))
   }
-  
+
   // Debug: log da resposta para rotas específicas
   if (path.includes('/importe-tabela-sla') || path.includes('/lista-telefones')) {
-    console.log(`[api.request] ${path}:`, {
-      status: res.status,
-      contentType: res.headers.get('content-type'),
-      textLength: responseText.length,
-      textPreview: responseText.substring(0, 200),
-      hasData: !!data,
-      dataKeys: data ? Object.keys(data) : [],
-      dataLength: data?.data?.length ?? 0,
-      total: data?.total ?? undefined,
-      fullData: data
-    })
+    // console.log(`[api.request] ${path}:`, {
+    //   status: res.status,
+    //   contentType: res.headers.get('content-type'),
+    //   textLength: responseText.length,
+    //   textPreview: responseText.substring(0, 200),
+    //   hasData: !!data,
+    //   dataKeys: data ? Object.keys(data) : [],
+    //   dataLength: data?.data?.length ?? 0,
+    //   total: data?.total ?? undefined,
+    //   fullData: data
+    // })
   }
-  
+
   return data || {}
 }
 
@@ -181,13 +181,13 @@ async function handleUploadResponse(res) {
   } catch {
     data = {}
   }
-  
+
   if (!res.ok) {
     if (res.status === 401 && typeof onUnauthorized === 'function') onUnauthorized()
     const message = data.detail || data.message || `Erro ${res.status}`
     throw new Error(typeof message === 'string' ? message : message[0]?.msg || JSON.stringify(message))
   }
-  
+
   return data || {}
 }
 
@@ -202,7 +202,7 @@ export async function salvarListaTelefones(token, file) {
   const url = `${API_BASE}/api/lista-telefones`
   const form = new FormData()
   form.append('file', file)
-  
+
   let res
   try {
     res = await fetch(url, {
@@ -216,7 +216,7 @@ export async function salvarListaTelefones(token, file) {
   } catch (err) {
     throw new Error(`Erro de rede: ${err.message || 'Não foi possível conectar ao servidor'}`)
   }
-  
+
   return handleUploadResponse(res)
 }
 
@@ -362,7 +362,7 @@ export async function salvarPedidos(token, file) {
   const url = `${API_BASE}/api/importe-tabela-pedidos`
   const form = new FormData()
   form.append('file', file)
-  
+
   let res
   try {
     res = await fetch(url, {
@@ -376,7 +376,7 @@ export async function salvarPedidos(token, file) {
   } catch (err) {
     throw new Error(`Erro de rede: ${err.message || 'Não foi possível conectar ao servidor'}`)
   }
-  
+
   return handleUploadResponse(res)
 }
 
@@ -441,7 +441,7 @@ export async function importarPedidosConsultados(token, file) {
   const url = `${API_BASE}/api/importe-tabela-consulta-bipagems`
   const form = new FormData()
   form.append('file', file)
-  
+
   let res
   try {
     res = await fetch(url, {
@@ -455,7 +455,7 @@ export async function importarPedidosConsultados(token, file) {
   } catch (err) {
     throw new Error(`Erro de rede: ${err.message || 'Não foi possível conectar ao servidor'}`)
   }
-  
+
   return handleUploadResponse(res)
 }
 
@@ -613,7 +613,7 @@ export async function updateResultadosConsultaMotorista(token, file) {
   const url = `${API_BASE}/api/resultados-consulta/motorista/atualizar`
   const form = new FormData()
   form.append('file', file)
-  
+
   let res
   try {
     res = await fetch(url, {
@@ -627,7 +627,7 @@ export async function updateResultadosConsultaMotorista(token, file) {
   } catch (err) {
     throw new Error(`Erro de rede: ${err.message || 'Não foi possível conectar ao servidor'}`)
   }
-  
+
   return handleUploadResponse(res)
 }
 
@@ -654,7 +654,7 @@ export async function salvarSLATabela(token, file) {
   const url = `${API_BASE}/api/importe-tabela-sla`
   const form = new FormData()
   form.append('file', file)
-  
+
   let res
   try {
     res = await fetch(url, {
@@ -668,23 +668,25 @@ export async function salvarSLATabela(token, file) {
   } catch (err) {
     throw new Error(`Erro de rede: ${err.message || 'Não foi possível conectar ao servidor'}`)
   }
-  
+
   return handleUploadResponse(res)
 }
 
 /**
  * Atualiza a tabela SLA com um Excel: atualiza linhas existentes (por número de pedido JMS)
- * e insere as novas (ex.: novos motoristas).
+ * da data indicada e insere as novas com essa data. Permite atualizar a tabela de um dia anterior.
  * @param {string} token - JWT (Bearer)
  * @param {File} file - Arquivo .xlsx
+ * @param {string} [data] - Data da tabela a atualizar (YYYY-MM-DD). Se omitida, usa a data de hoje.
  * @returns {Promise<{ updated: number, inserted: number }>}
  */
-export async function atualizarSLATabela(token, file) {
+export async function atualizarSLATabela(token, file, data = null) {
   if (!token) throw new Error('Sessão expirada. Faça login novamente.')
   const url = `${API_BASE}/api/importe-tabela-sla/atualizar`
   const form = new FormData()
   form.append('file', file)
-  
+  if (data && String(data).trim()) form.append('data', String(data).trim())
+
   let res
   try {
     res = await fetch(url, {
@@ -698,7 +700,7 @@ export async function atualizarSLATabela(token, file) {
   } catch (err) {
     throw new Error(`Erro de rede: ${err.message || 'Não foi possível conectar ao servidor'}`)
   }
-  
+
   return handleUploadResponse(res)
 }
 
@@ -713,7 +715,7 @@ export async function salvarEntradaGalpao(token, file) {
   const url = `${API_BASE}/api/importe-tabela-sla/entrada-galpao`
   const form = new FormData()
   form.append('file', file)
-  
+
   let res
   try {
     res = await fetch(url, {
@@ -727,7 +729,7 @@ export async function salvarEntradaGalpao(token, file) {
   } catch (err) {
     throw new Error(`Erro de rede: ${err.message || 'Não foi possível conectar ao servidor'}`)
   }
-  
+
   return handleUploadResponse(res)
 }
 

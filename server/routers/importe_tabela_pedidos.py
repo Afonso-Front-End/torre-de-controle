@@ -20,6 +20,7 @@ from database import get_db, USER_ID_FIELD
 from limiter import limiter
 from routers.auth import require_user_id
 from table_ids import require_table_id
+from upload_limits import read_upload_with_limit
 
 router = APIRouter(prefix="/importe-tabela-pedidos", tags=["importe-tabela-pedidos"])
 COLLECTION = "pedidos"
@@ -167,7 +168,7 @@ async def salvar_pedidos(request: Request, file: UploadFile = File(...), user_id
     if not ext.endswith(".xlsx"):
         raise HTTPException(status_code=400, detail="Envie um arquivo .xlsx")
 
-    contents = await file.read()
+    contents = await read_upload_with_limit(file)
     try:
         rows = _excel_para_linhas(contents)
     except Exception as e:

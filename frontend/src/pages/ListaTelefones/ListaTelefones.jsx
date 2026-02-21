@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { MdOutlineDelete, MdOutlineDownload, MdLock, MdEdit, MdUpload } from 'react-icons/md'
 import * as XLSX from 'xlsx'
@@ -11,6 +12,7 @@ import './ListaTelefones.css'
 
 export default function ListaTelefones() {
   const { user } = useAppContext()
+  const location = useLocation()
   const [selectedDatas, setSelectedDatas] = useState([])
   const fetchListaDatas = useCallback(() => getListaTelefonesDatas(user?.token), [user?.token])
   const {
@@ -43,6 +45,17 @@ export default function ListaTelefones() {
     getRawValuesThatTrimTo,
     refetchLista,
   } = useListaTelefones(user?.token, user?.config?.linhas_por_pagina, selectedDatas)
+
+  /* Ao chegar da SLA ou Resultados Consulta com state { motorista, base }, preenche a pesquisa para filtrar o motorista. */
+  const stateMotoristaRef = useRef(null)
+  useEffect(() => {
+    const state = location.state
+    if (!state || typeof state !== 'object') return
+    const motorista = (state.motorista ?? state.correio ?? '').toString().trim()
+    if (!motorista || stateMotoristaRef.current === motorista) return
+    stateMotoristaRef.current = motorista
+    setSearchTerm(motorista)
+  }, [location.state, setSearchTerm])
 
   const { showNotification } = useNotification()
   const hubColumnIndex = headerValues.findIndex((h) => String(h).trim().toUpperCase() === 'HUB')

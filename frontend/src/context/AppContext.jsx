@@ -5,7 +5,7 @@ const STORAGE_KEY = 'torre_user'
 
 function getStoredUser() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = sessionStorage.getItem(STORAGE_KEY)
     return raw ? JSON.parse(raw) : null
   } catch {
     return null
@@ -27,10 +27,10 @@ export function AppProvider({ children }) {
 
   const setUser = useCallback((data) => {
     if (data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data))
       setUserState(data)
     } else {
-      localStorage.removeItem(STORAGE_KEY)
+      sessionStorage.removeItem(STORAGE_KEY)
       setUserState(null)
     }
   }, [])

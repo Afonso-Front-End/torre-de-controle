@@ -1,6 +1,11 @@
 # Executável gerado (não versionar o .exe)
 build/dist/
 
+# Variáveis de ambiente (nunca versionar segredos)
+.env
+.env.local
+.env.*.local
+
 # Ambiente e cache Python (raiz)
 __pycache__/
 *.py[cod]

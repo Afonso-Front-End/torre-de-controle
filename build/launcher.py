@@ -38,12 +38,27 @@ else:
 # Adicionar server ao path
 sys.path.insert(0, str(SERVER_DIR))
 
-# Configurar variÃ¡veis de ambiente antes de importar
-os.environ['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017')
-os.environ['MONGO_DB_NAME'] = os.getenv('MONGO_DB_NAME', 'torre_de_controle')
-os.environ['CORS_ORIGINS'] = 'http://localhost:8000,http://127.0.0.1:8000'
+# Carregar .env do server para o launcher usar as mesmas variáveis (ex.: GITHUB_REPO_*)
+_env_file = SERVER_DIR / '.env'
+if _env_file.exists():
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(_env_file)
+    except Exception:
+        pass
+
+# Configurar variáveis de ambiente antes de importar
+os.environ.setdefault('MONGO_URI', 'mongodb://localhost:27017')
+os.environ.setdefault('MONGO_DB_NAME', 'torre_de_controle')
+os.environ['CORS_ORIGINS'] = os.getenv('CORS_ORIGINS', 'http://localhost:8000,http://127.0.0.1:8000')
 os.environ['HOST'] = '127.0.0.1'
 os.environ['PORT'] = '8000'
+os.environ.setdefault('GITHUB_REPO_OWNER', 'Afonso-Front-End')
+os.environ.setdefault('GITHUB_REPO_NAME', 'torre-de-controle')
+
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request as StarletteRequest
+from starlette.responses import JSONResponse
 
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
@@ -83,7 +98,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Headers de segurança (evitar clickjacking, XSS, etc.)
+
+class BodySizeLimitMiddleware(BaseHTTPMiddleware):
+    """Rejeita requisições com Content-Length acima do limite (max_upload_mb)."""
+    async def dispatch(self, request: StarletteRequest, call_next):
+        content_length = request.headers.get("content-length")
+        if content_length:
+            try:
+                if int(content_length) > settings.max_upload_bytes:
+                    return JSONResponse(
+                        status_code=413,
+                        content={"detail": f"Corpo da requisição demasiado grande. Limite: {settings.max_upload_mb} MB."},
+                    )
+            except ValueError:
+                pass
+        return await call_next(request)
+
+
+app.add_middleware(BodySizeLimitMiddleware)
+
+# Headers de segurança (evitar clickjacking, XSS, etc.) + CSP
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
     response = await call_next(request)
@@ -91,6 +125,7 @@ async def add_security_headers(request: Request, call_next):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'"
     return response
 
 # Incluir routers da API PRIMEIRO (antes das rotas estáticas)
@@ -209,47 +244,85 @@ def open_browser():
     webbrowser.open('http://127.0.0.1:8000')
 
 
-if __name__ == "__main__":
-    print("=" * 60)
-    print("🚀 Torre de Controle - Iniciando servidor...")
-    print("=" * 60)
-    
-    # Tentar iniciar MongoDB portátil
-    mongodb_process = start_mongodb_portable()
-    
-    # Verificar conexão com MongoDB
-    print("\n[INFO] Verificando conexão com MongoDB...")
-    if not check_mongodb_connection():
-        print("\n" + "=" * 60)
-        print("⚠️  AVISO: MongoDB não está acessível!")
-        print("=" * 60)
-        print("Opções:")
-        print("1. Instale e inicie o MongoDB manualmente")
-        print("2. Adicione MongoDB portátil na pasta do executável:")
-        mongodb_path = EXE_DIR / 'MongoDB' / 'bin' / 'mongod.exe'
-        print(f"   {mongodb_path}")
-        print("3. Configure MONGO_URI para apontar para outro servidor")
-        print("=" * 60)
-        resposta = input("\nDeseja continuar mesmo assim? (s/N): ")
-        if resposta.lower() != 's':
-            print("Encerrando...")
-            sys.exit(1)
-        print("\n[AVISO] Continuando sem MongoDB - algumas funcionalidades podem não funcionar")
-    
-    print(f"\n📁 Diretório base: {BASE_DIR}")
-    print(f"📁 Frontend: {FRONTEND_DIR}")
-    print(f"📁 Server: {SERVER_DIR}")
-    print("=" * 60)
-    print("🌐 Abrindo navegador em http://127.0.0.1:8000")
-    print("=" * 60)
-    print("Pressione Ctrl+C para encerrar o servidor")
-    print("=" * 60)
+def _show_error_message(title, message):
+    """Mostra mensagem de erro em caixa de diálogo (Windows). Em erro não fecha a janela do utilizador."""
+    if sys.platform == 'win32':
+        try:
+            import ctypes
+            ctypes.windll.user32.MessageBoxW(0, message, title, 0x10)  # MB_OK + MB_ICONERROR
+        except Exception:
+            pass
+    # Fallback: escrever para stderr (em modo script ainda aparece no terminal)
+    print(message, file=sys.stderr)
 
-    # Abrir navegador em thread separada
-    browser_thread = threading.Thread(target=open_browser, daemon=True)
-    browser_thread.start()
 
+def _ask_yes_no(title, message):
+    """Pergunta Sim/Não. No exe (sem consola) usa MessageBox; em script usa input()."""
+    if getattr(sys, 'frozen', False) and sys.platform == 'win32':
+        try:
+            import ctypes
+            # MB_YESNO = 0x04, MB_ICONQUESTION = 0x20, IDYES = 6
+            r = ctypes.windll.user32.MessageBoxW(0, message, title, 0x24)
+            return r == 6  # IDYES
+        except Exception:
+            return False
+    # Modo script (com consola)
+    resposta = input(f"\n{message} (s/N): ").strip().lower()
+    return resposta == 's'
+
+
+def _setup_log_file():
+    """Quando executável: redireciona stdout/stderr para ficheiro de log (para não perder mensagens)."""
+    if not getattr(sys, 'frozen', False):
+        return
     try:
+        log_dir = EXE_DIR / 'logs'
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_file = log_dir / 'torre-de-controle.log'
+        f = open(log_file, 'a', encoding='utf-8')
+        f.write(f"\n--- {time.strftime('%Y-%m-%d %H:%M:%S')} ---\n")
+        f.flush()
+        sys.stdout = f
+        sys.stderr = f
+    except Exception:
+        pass
+
+
+if __name__ == "__main__":
+    # Quando é o .exe (frozen), não há janela de consola: redirecionar saída para log
+    _setup_log_file()
+
+    mongodb_process = None
+    try:
+        print("=" * 60)
+        print("Torre de Controle - Iniciando servidor...")
+        print("=" * 60)
+
+        mongodb_process = start_mongodb_portable()
+
+        print("[INFO] Verificando conexão com MongoDB...")
+        if not check_mongodb_connection():
+            print("[AVISO] MongoDB não está acessível.")
+            mongodb_path = EXE_DIR / 'MongoDB' / 'bin' / 'mongod.exe'
+            msg = (
+                "MongoDB não está acessível.\n\n"
+                "Opções:\n"
+                "1. Instale e inicie o MongoDB manualmente\n"
+                f"2. Adicione MongoDB portátil em:\n   {mongodb_path}\n"
+                "3. Configure MONGO_URI no .env\n\n"
+                "Deseja continuar mesmo assim? (algumas funcionalidades podem não funcionar)"
+            )
+            if not _ask_yes_no("Torre de Controle - MongoDB", msg):
+                print("Encerrando...")
+                sys.exit(1)
+            print("[AVISO] Continuando sem MongoDB.")
+
+        print(f"[INFO] Diretório base: {BASE_DIR}")
+        print("[INFO] Abrindo navegador em http://127.0.0.1:8000")
+
+        browser_thread = threading.Thread(target=open_browser, daemon=True)
+        browser_thread.start()
+
         uvicorn.run(
             app,
             host="127.0.0.1",
@@ -257,12 +330,20 @@ if __name__ == "__main__":
             log_level="info"
         )
     except KeyboardInterrupt:
-        print("\n\n🛑 Servidor encerrado pelo usuário")
-        # Encerrar MongoDB portátil se foi iniciado
+        print("\n[INFO] Servidor encerrado pelo usuário")
         if mongodb_process:
             try:
                 mongodb_process.terminate()
-                print("[INFO] MongoDB portátil encerrado")
-            except:
+            except Exception:
                 pass
         sys.exit(0)
+    except Exception as e:
+        err_msg = f"{type(e).__name__}: {e}"
+        print(f"[ERRO] {err_msg}", file=sys.stderr)
+        _show_error_message("Torre de Controle - Erro", err_msg)
+        if mongodb_process:
+            try:
+                mongodb_process.terminate()
+            except Exception:
+                pass
+        sys.exit(1)

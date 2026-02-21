@@ -1,0 +1,27 @@
+.logo {
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: 0.02em;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.logo__jt {
+  transition: color 0.2s ease;
+}
+
+.logo__express {
+  text-shadow: 0 0 8px rgba(229, 57, 53, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* J&T em preto (fundo claro) */
+.logo--jt-black .logo__jt {
+  color: #111;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* J&T em branco (fundo escuro) */
+.logo--jt-white .logo__jt {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+}

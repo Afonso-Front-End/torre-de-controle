@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { MdOutlineDelete, MdClose, MdUpload, MdSettings, MdSpaceDashboard } from 'react-icons/md'
+import { MdOutlineDelete, MdClose, MdUpload, MdSettings, MdSpaceDashboard, MdEdit, MdCheck, MdMessage, MdDownload, MdContentCopy } from 'react-icons/md'
 import { CiFilter } from 'react-icons/ci'
 import { useAppContext, useNotification } from '../../../context'
 import { transition, overlayVariants, modalContentVariants } from '../../../utils/animations'
-import { getResultadosConsultaMotoristaDatas, getResultadosConsultaMotorista, updateResultadosConsultaMotorista, deleteResultadosConsultaMotorista, updateConfig } from '../../../services'
+import { getResultadosConsultaMotoristaDatas, getResultadosConsultaMotorista, updateResultadosConsultaMotorista, deleteResultadosConsultaMotorista, updateConfig, getContatoListaTelefones, updateContatoListaTelefones, upsertContatoListaTelefones } from '../../../services'
 import { getResultadosCache, setResultadosCache, invalidateResultadosCache } from '../../../utils/resultadosCache'
 import {
   VALID_ROWS_PER_PAGE,
@@ -16,6 +16,7 @@ import {
   MODAL_FILTER_NAO_ENTREGUES,
   RESULTADOS_DATAS_STORAGE_KEY,
   BASE_KEY,
+  DIAS_SEM_MOVIMENTACAO_KEY,
   MARCA_KEY,
   NUMERO_JMS_KEY,
   PER_PAGE_FETCH,
@@ -27,9 +28,11 @@ import {
   groupedToTable,
 } from './ResultadosConsulta.js'
 import Loader from '../../../components/Loader'
+import { Logo } from '../../../components/Logo'
 import DateFilterSelect from '../../../components/DateFilterSelect'
 import DataTable from '../VerificarPedidos/DataTable'
 import { CHUNK_SIZE } from '../VerificarPedidos/VerificarPedidosParados.js'
+import * as XLSX from 'xlsx'
 import './ResultadosConsulta.css'
 
 /** Barra de evolução: só aparece quando há pedidos assinados (entregues); valores X/Y sempre visíveis. */
@@ -53,6 +56,78 @@ function EvolucaoBar({ entregues = 0, naoEntregues = 0 }) {
       </span>
     </div>
   )
+}
+
+/* --- Helpers para telefone e mensagem (mesma lógica do modal SLA não entregues) --- */
+function getSaudacao() {
+  const h = new Date().getHours()
+  if (h >= 6 && h < 12) return 'Bom dia'
+  if (h >= 12 && h < 18) return 'Boa tarde'
+  return 'Boa noite'
+}
+const PLACEHOLDER_ENTREGADOR = '(Nome do entregador)'
+const PLACEHOLDER_TOTAL = '(Total de pedidos)'
+const PLACEHOLDER_USUARIO = '(Nome do usuário)'
+const PLACEHOLDERS_SAUDACAO = ['(Bom dia)', '(Boa tarde)', '(Boa noite)']
+function getPlaceholderSaudacao() {
+  const s = getSaudacao()
+  if (s === 'Bom dia') return '(Bom dia)'
+  if (s === 'Boa tarde') return '(Boa tarde)'
+  return '(Boa noite)'
+}
+function mensagemMantemPlaceholders(texto, placeholderSaudacao) {
+  const t = String(texto ?? '')
+  if (!t.includes(PLACEHOLDER_ENTREGADOR)) return false
+  if (!t.includes(placeholderSaudacao)) return false
+  if (!t.includes(PLACEHOLDER_TOTAL)) return false
+  if (!t.includes(PLACEHOLDER_USUARIO)) return false
+  return true
+}
+function getMensagemTemplate(total, placeholderSaudacao) {
+  return `Olá ${PLACEHOLDER_ENTREGADOR}, ${placeholderSaudacao} meu nome é ${PLACEHOLDER_USUARIO} e sou da torre de controle J&T express. Pedidos sem movimentação constam em aberto ${PLACEHOLDER_TOTAL} pedido${total !== 1 ? 's' : ''}. Aguardo seu retorno. Atenciosamente: ${PLACEHOLDER_USUARIO}`
+}
+function getMensagemApenasPlaceholders(placeholderSaudacao) {
+  return `${PLACEHOLDER_ENTREGADOR}, ${placeholderSaudacao}, ${PLACEHOLDER_USUARIO}, ${PLACEHOLDER_TOTAL}, ${PLACEHOLDER_USUARIO}`
+}
+function substituirPlaceholders(texto, entregador, saudacaoReal, total, nomeUsuario) {
+  let out = String(texto ?? '')
+  out = out.split(PLACEHOLDER_ENTREGADOR).join(entregador)
+  out = out.split(PLACEHOLDER_TOTAL).join(String(total))
+  out = out.split(PLACEHOLDER_USUARIO).join(nomeUsuario)
+  PLACEHOLDERS_SAUDACAO.forEach((ph) => { out = out.split(ph).join(saudacaoReal) })
+  return out
+}
+const TODOS_PLACEHOLDERS_RC = [PLACEHOLDER_ENTREGADOR, PLACEHOLDER_TOTAL, PLACEHOLDER_USUARIO, ...PLACEHOLDERS_SAUDACAO]
+function getSegmentosMensagem(texto) {
+  const t = String(texto ?? '')
+  const segmentos = []
+  let restante = t
+  while (restante.length > 0) {
+    let menorIdx = -1
+    let qual = ''
+    for (const ph of TODOS_PLACEHOLDERS_RC) {
+      const i = restante.indexOf(ph)
+      if (i !== -1 && (menorIdx === -1 || i < menorIdx)) { menorIdx = i; qual = ph }
+    }
+    if (menorIdx === -1) {
+      if (restante) segmentos.push({ type: 'text', value: restante })
+      break
+    }
+    if (menorIdx > 0) segmentos.push({ type: 'text', value: restante.slice(0, menorIdx) })
+    segmentos.push({ type: 'placeholder', value: qual })
+    restante = restante.slice(menorIdx + qual.length)
+  }
+  return segmentos
+}
+function formatarTelefoneComNove(val) {
+  const digits = String(val ?? '').replace(/\D/g, '')
+  if (digits.length === 10 && digits.startsWith('1') === false) return digits.slice(0, 2) + '9' + digits.slice(2)
+  return digits
+}
+function telefoneParaWhatsApp(val) {
+  const digits = formatarTelefoneComNove(val)
+  if (digits.length < 10) return ''
+  return '55' + digits
 }
 
 export default function ResultadosConsulta() {
@@ -101,6 +176,10 @@ export default function ResultadosConsulta() {
   const [showConfirmExcluir, setShowConfirmExcluir] = useState(false)
   const [showConfirmDesativarIncluir, setShowConfirmDesativarIncluir] = useState(false)
   const [showConfigModal, setShowConfigModal] = useState(false)
+  /** Seleção no modal de config: dias sem movimentação e bases (antes de guardar). */
+  const [configDiasSelection, setConfigDiasSelection] = useState([])
+  const [configBasesSelection, setConfigBasesSelection] = useState([])
+  const [savingConfigFiltros, setSavingConfigFiltros] = useState(false)
   const fileInputRef = useRef(null)
   const [searchCorreio, setSearchCorreio] = useState('')
   const [columnFilters, setColumnFilters] = useState({})
@@ -130,6 +209,63 @@ export default function ResultadosConsulta() {
       return MODAL_FILTER_ENTREGUES
     }
   })
+  /** Telefone e mensagem no modal do entregador (mesma lógica do modal SLA não entregues) */
+  const [modalTelefone, setModalTelefone] = useState('')
+  const [modalContatoDocId, setModalContatoDocId] = useState(null)
+  const [modalPhoneEditing, setModalPhoneEditing] = useState(false)
+  const [modalSavingContato, setModalSavingContato] = useState(false)
+  const [mensagemModalOpen, setMensagemModalOpen] = useState(false)
+  const [mensagemTexto, setMensagemTexto] = useState('')
+  const [savingMensagem, setSavingMensagem] = useState(false)
+  const [mensagemEditKey, setMensagemEditKey] = useState(0)
+  const mensagemPlaceholderSaudacaoRef = useRef('(Boa tarde)')
+  const mensagemTextoRef = useRef(mensagemTexto)
+  mensagemTextoRef.current = mensagemTexto
+  const mensagemEditRef = useRef(null)
+  const mensagemSalva = user?.config?.mensagem_resultados_consulta
+
+  /** Colunas que o botão "Copiar" usa (config do utilizador); por defeito todas. */
+  const colunasCopiaConfig = user?.config?.colunas_copia_resultados_consulta
+  const columnsToCopy = useMemo(() => {
+    if (Array.isArray(colunasCopiaConfig) && colunasCopiaConfig.length > 0) {
+      const set = new Set(MOTORISTA_COLUMNS)
+      const valid = colunasCopiaConfig.filter((c) => set.has(c))
+      if (valid.length > 0) return valid
+    }
+    return [...MOTORISTA_COLUMNS]
+  }, [colunasCopiaConfig])
+
+  const [modalConfigColunasOpen, setModalConfigColunasOpen] = useState(false)
+  const [modalConfigColunasSelection, setModalConfigColunasSelection] = useState(() => [...MOTORISTA_COLUMNS])
+  const [savingConfigColunas, setSavingConfigColunas] = useState(false)
+
+  const openModalConfigColunas = useCallback(() => {
+    setModalConfigColunasSelection(columnsToCopy.length ? [...columnsToCopy] : [...MOTORISTA_COLUMNS])
+    setModalConfigColunasOpen(true)
+  }, [columnsToCopy])
+
+  const handleSaveConfigColunas = useCallback(async () => {
+    if (!token) return
+    setSavingConfigColunas(true)
+    try {
+      await updateConfig(token, { colunas_copia_resultados_consulta: modalConfigColunasSelection })
+      await refetchUser()
+      setModalConfigColunasOpen(false)
+      showNotification('Colunas para cópia guardadas.', 'success')
+    } catch (err) {
+      showNotification(err?.message ?? 'Não foi possível guardar.', 'error')
+    } finally {
+      setSavingConfigColunas(false)
+    }
+  }, [token, modalConfigColunasSelection, refetchUser, showNotification])
+
+  const toggleModalConfigColuna = useCallback((col) => {
+    setModalConfigColunasSelection((prev) => {
+      const next = prev.filter((c) => c !== col)
+      if (next.length === prev.length) return [...prev, col]
+      return next
+    })
+  }, [])
 
   /* Fase 1: modalPending definido → primeiro paint é leve (só modal + loader). Depois carregamos o payload. */
   useEffect(() => {
@@ -168,27 +304,127 @@ export default function ResultadosConsulta() {
     setSelectedDatas(newDatas)
     try {
       localStorage.setItem(RESULTADOS_DATAS_STORAGE_KEY, JSON.stringify(newDatas))
-    } catch {}
+    } catch { }
   }, [])
 
   const setModalFilterAndSave = useCallback((value) => {
     setModalFilter(value)
     try {
       localStorage.setItem(MODAL_FILTER_STORAGE_KEY, value)
-    } catch {}
+    } catch { }
   }, [])
 
   const closeModal = useCallback(() => {
     setModalEntregador(null)
     setModalPending(null)
     setModalSelectedIndices(new Set())
-    /* Remove foco do elemento ativo (ex.: linha da tabela) para não ficar marcado ao fechar com ESC */
+    setModalTelefone('')
+    setModalContatoDocId(null)
+    setModalPhoneEditing(false)
+    setMensagemModalOpen(false)
+    setModalConfigColunasOpen(false)
     if (document.activeElement && typeof document.activeElement.blur === 'function') {
       document.activeElement.blur()
     }
   }, [])
 
   const modalAberto = Boolean(modalPending || modalEntregador)
+  const modalEntregadorOuPending = modalEntregador || modalPending
+  const modalCorreio = modalEntregadorOuPending?.correio ?? ''
+  const modalBase = modalEntregadorOuPending?.base ?? ''
+  const nomeUsuario = user?.nome ?? ''
+  const saudacao = useMemo(() => getSaudacao(), [])
+
+  const fetchModalContato = useCallback(async () => {
+    if (!token || !modalCorreio?.trim()) return
+    try {
+      const res = await getContatoListaTelefones(token, modalCorreio.trim(), (modalBase || '(sem base)').trim())
+      setModalTelefone(res.contato ?? '')
+      setModalContatoDocId(res._id ?? null)
+    } catch {
+      setModalTelefone('')
+      setModalContatoDocId(null)
+    }
+  }, [token, modalCorreio, modalBase])
+
+  const handleModalSaveContato = useCallback(async () => {
+    if (!token || !modalCorreio?.trim()) return
+    const formatted = formatarTelefoneComNove(modalTelefone)
+    const baseVal = (modalBase || '(sem base)').trim()
+    setModalSavingContato(true)
+    try {
+      if (modalContatoDocId) {
+        await updateContatoListaTelefones(token, modalContatoDocId, formatted)
+        setModalTelefone(formatted)
+        setModalPhoneEditing(false)
+        showNotification('Telefone atualizado.', 'success')
+      } else {
+        await upsertContatoListaTelefones(token, modalCorreio.trim(), baseVal, formatted)
+        setModalTelefone(formatted)
+        setModalPhoneEditing(false)
+        const res = await getContatoListaTelefones(token, modalCorreio.trim(), baseVal)
+        setModalContatoDocId(res._id ?? null)
+        showNotification('Telefone guardado na lista de telefones.', 'success')
+      }
+    } catch (err) {
+      showNotification(err.message || 'Não foi possível guardar o telefone.', 'error')
+    } finally {
+      setModalSavingContato(false)
+    }
+  }, [token, modalContatoDocId, modalCorreio, modalBase, modalTelefone, showNotification])
+
+  const handleModalOpenWhatsApp = useCallback(() => {
+    const num = telefoneParaWhatsApp(modalTelefone)
+    if (!num) {
+      showNotification('Informe o número de telefone para abrir o WhatsApp.', 'error')
+      return
+    }
+    window.open(`https://wa.me/${num}`, '_blank', 'noopener,noreferrer')
+  }, [modalTelefone, showNotification])
+
+  const handleMensagemTextoChange = useCallback(() => {
+    const el = mensagemEditRef.current
+    if (!el) return
+    const next = el.innerText
+    if (mensagemMantemPlaceholders(next, mensagemPlaceholderSaudacaoRef.current)) return
+    const apenasPlaceholders = getMensagemApenasPlaceholders(mensagemPlaceholderSaudacaoRef.current)
+    setMensagemTexto(apenasPlaceholders)
+    setMensagemEditKey((k) => k + 1)
+    showNotification('Visível apenas o que não pode ser excluído (os campos entre parênteses).', 'info')
+  }, [showNotification])
+
+  const handleMensagemPaste = useCallback((e) => {
+    e.preventDefault()
+    const text = e.clipboardData?.getData('text/plain') ?? ''
+    document.execCommand('insertText', false, text)
+  }, [])
+
+  const handleGuardarMensagem = useCallback(async () => {
+    const el = mensagemEditRef.current
+    if (!el || !token) return
+    const text = el.innerText?.trim() ?? ''
+    if (!mensagemMantemPlaceholders(text, mensagemPlaceholderSaudacaoRef.current)) {
+      showNotification('A mensagem deve conter todos os campos entre parênteses para poder guardar.', 'error')
+      return
+    }
+    setSavingMensagem(true)
+    try {
+      await updateConfig(token, { mensagem_resultados_consulta: text })
+      await refetchUser()
+      mensagemTextoRef.current = text
+      setMensagemTexto(text)
+      showNotification('Mensagem guardada no servidor.', 'success')
+    } catch (err) {
+      showNotification(err?.message ?? 'Não foi possível guardar a mensagem.', 'error')
+    } finally {
+      setSavingMensagem(false)
+    }
+  }, [token, refetchUser, showNotification])
+
+  useEffect(() => {
+    if (modalEntregador && token && modalCorreio?.trim()) fetchModalContato()
+  }, [modalEntregador, token, modalCorreio, fetchModalContato])
+
   useEffect(() => {
     if (!modalAberto) return
     const onKeyDown = (e) => {
@@ -348,24 +584,6 @@ export default function ResultadosConsulta() {
     return () => document.removeEventListener('pointerdown', onPointerDown)
   }, [copyDropdownOpen])
 
-  /** Números JMS apenas dos registos com Marca de assinatura = "Não entregue". */
-  const numerosNaoEntregues = useMemo(() => {
-    if (!Array.isArray(data) || data.length === 0) return []
-    return data
-      .filter((doc) => isNaoEntregue(doc[MARCA_KEY]))
-      .map((doc) => doc[NUMERO_JMS_KEY])
-      .filter((v) => v != null && String(v).trim() !== '')
-  }, [data])
-
-  const numerosChunks = useMemo(() => {
-    if (numerosNaoEntregues.length === 0) return []
-    const list = []
-    for (let i = 0; i < numerosNaoEntregues.length; i += CHUNK_SIZE) {
-      list.push(numerosNaoEntregues.slice(i, i + CHUNK_SIZE))
-    }
-    return list
-  }, [numerosNaoEntregues])
-
   const handleCopyChunk = useCallback(
     (chunk) => {
       const text = chunk.join('\n')
@@ -377,14 +595,113 @@ export default function ResultadosConsulta() {
     [showNotification]
   )
 
-  const grouped = useMemo(() => groupByCorreioAndBase(data), [data])
+  /** Filtros da tabela principal (guardados no user config): bases e dias sem movimentação. */
+  const basesConfig = user?.config?.bases_resultados_consulta
+  const diasSemMovimentacaoConfig = user?.config?.dias_sem_movimentacao_resultados_consulta
+  const dataFiltered = useMemo(() => {
+    let list = data
+    if (Array.isArray(basesConfig) && basesConfig.length > 0) {
+      const baseSet = new Set(basesConfig.map((b) => String(b).trim()).filter(Boolean))
+      if (baseSet.size > 0) {
+        list = list.filter((doc) => baseSet.has(String(doc[BASE_KEY] ?? '').trim()))
+      }
+    }
+    if (Array.isArray(diasSemMovimentacaoConfig) && diasSemMovimentacaoConfig.length > 0) {
+      const diasSet = new Set(diasSemMovimentacaoConfig.map((d) => String(d).trim()).filter((s) => s !== undefined && s !== null))
+      if (diasSet.size > 0) {
+        list = list.filter((doc) => diasSet.has(String(doc[DIAS_SEM_MOVIMENTACAO_KEY] ?? '').trim()))
+      }
+    }
+    return list
+  }, [data, basesConfig, diasSemMovimentacaoConfig])
+
+  /** Números JMS apenas dos registos com Marca = "Não entregue" (respeitando filtros de bases/dias). */
+  const numerosNaoEntregues = useMemo(() => {
+    if (!Array.isArray(dataFiltered) || dataFiltered.length === 0) return []
+    return dataFiltered
+      .filter((doc) => isNaoEntregue(doc[MARCA_KEY]))
+      .map((doc) => doc[NUMERO_JMS_KEY])
+      .filter((v) => v != null && String(v).trim() !== '')
+  }, [dataFiltered])
+
+  const numerosChunks = useMemo(() => {
+    if (numerosNaoEntregues.length === 0) return []
+    const list = []
+    for (let i = 0; i < numerosNaoEntregues.length; i += CHUNK_SIZE) {
+      list.push(numerosNaoEntregues.slice(i, i + CHUNK_SIZE))
+    }
+    return list
+  }, [numerosNaoEntregues])
+
+  /** Valores únicos (a partir dos dados completos) para os selects do modal de config. */
+  const uniqueDiasSemMovimentacao = useMemo(() => {
+    const set = new Set()
+    data.forEach((doc) => {
+      const v = doc[DIAS_SEM_MOVIMENTACAO_KEY]
+      const s = v !== undefined && v !== null ? String(v).trim() : ''
+      if (s !== '') set.add(s)
+    })
+    return [...set].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base', numeric: true }))
+  }, [data])
+
+  const uniqueBases = useMemo(() => {
+    const set = new Set()
+    data.forEach((doc) => {
+      const s = String(doc[BASE_KEY] ?? '').trim()
+      if (s) set.add(s)
+    })
+    return [...set].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+  }, [data])
+
+  useEffect(() => {
+    if (showConfigModal) {
+      setConfigDiasSelection(Array.isArray(user?.config?.dias_sem_movimentacao_resultados_consulta) ? [...user.config.dias_sem_movimentacao_resultados_consulta] : [])
+      setConfigBasesSelection(Array.isArray(user?.config?.bases_resultados_consulta) ? [...user.config.bases_resultados_consulta] : [])
+    }
+  }, [showConfigModal, user?.config?.dias_sem_movimentacao_resultados_consulta, user?.config?.bases_resultados_consulta])
+
+  const handleSaveConfigFiltros = useCallback(async () => {
+    if (!token) return
+    setSavingConfigFiltros(true)
+    try {
+      await updateConfig(token, {
+        dias_sem_movimentacao_resultados_consulta: configDiasSelection,
+        bases_resultados_consulta: configBasesSelection,
+      })
+      await refetchUser()
+      setShowConfigModal(false)
+      showNotification('Filtros guardados. A tabela foi atualizada.', 'success')
+    } catch (err) {
+      showNotification(err?.message ?? 'Não foi possível guardar.', 'error')
+    } finally {
+      setSavingConfigFiltros(false)
+    }
+  }, [token, configDiasSelection, configBasesSelection, refetchUser, showNotification])
+
+  const toggleConfigDias = useCallback((value) => {
+    setConfigDiasSelection((prev) => {
+      const next = prev.filter((v) => v !== value)
+      if (next.length === prev.length) return [...prev, value]
+      return next
+    })
+  }, [])
+
+  const toggleConfigBase = useCallback((value) => {
+    setConfigBasesSelection((prev) => {
+      const next = prev.filter((v) => v !== value)
+      if (next.length === prev.length) return [...prev, value]
+      return next
+    })
+  }, [])
+
+  const grouped = useMemo(() => groupByCorreioAndBase(dataFiltered), [dataFiltered])
 
   /** Agrupa com Evolução: para cada entregador conta entregues vs não entregues pela "Marca de assinatura". */
   const groupedWithEvolucao = useMemo(() => {
     return grouped.map((row) => {
       const correio = String(row[CORREIO_KEY] ?? '').trim()
       const base = String(row[BASE_KEY] ?? '').trim()
-      const pedidos = data.filter(
+      const pedidos = dataFiltered.filter(
         (doc) =>
           String(doc[CORREIO_KEY] ?? '').trim() === correio &&
           String(doc[BASE_KEY] ?? '').trim() === base
@@ -399,7 +716,7 @@ export default function ResultadosConsulta() {
       const evolucaoDisplay = `${entregues} entregues / ${naoEntregues} não entregues`
       return { ...row, entregues, naoEntregues, evolucaoDisplay }
     })
-  }, [grouped, data])
+  }, [grouped, dataFiltered])
 
   const getUniqueColumnValues = useCallback(
     (colIndex) => {
@@ -655,12 +972,12 @@ export default function ResultadosConsulta() {
   const pedidosEntregador = useMemo(() => {
     if (!modalEntregador) return []
     const { correio, base } = modalEntregador
-    return data.filter(
+    return dataFiltered.filter(
       (doc) =>
         String(doc[CORREIO_KEY] ?? '').trim() === correio &&
         String(doc[BASE_KEY] ?? '').trim() === base
     )
-  }, [data, modalEntregador])
+  }, [dataFiltered, modalEntregador])
 
   const pedidosFiltered = useMemo(() => {
     if (modalFilter === MODAL_FILTER_ENTREGUES) {
@@ -673,6 +990,91 @@ export default function ResultadosConsulta() {
     entregues: pedidosEntregador.filter((doc) => isEntregue(doc[MARCA_KEY])).length,
     naoEntregues: pedidosEntregador.filter((doc) => isNaoEntregue(doc[MARCA_KEY])).length,
   }), [pedidosEntregador])
+
+  const getMensagemFinal = useCallback(() => {
+    const raw = mensagemEditRef.current?.innerText ?? mensagemTexto
+    const total = pedidosEntregador.length
+    const displayEntregador = (modalCorreio || '').trim() || '(entregador)'
+    return substituirPlaceholders(raw, displayEntregador, saudacao, total, nomeUsuario)
+  }, [mensagemTexto, modalCorreio, saudacao, nomeUsuario, pedidosEntregador.length])
+
+  const handleOpenMensagemModal = useCallback(() => {
+    const total = pedidosEntregador.length
+    const phSaudacao = getPlaceholderSaudacao()
+    mensagemPlaceholderSaudacaoRef.current = phSaudacao
+    const saved = typeof mensagemSalva === 'string' && mensagemSalva.trim()
+    const usarSalva = saved && mensagemMantemPlaceholders(mensagemSalva.trim(), phSaudacao)
+    const msg = usarSalva ? mensagemSalva.trim() : getMensagemTemplate(total, phSaudacao)
+    setMensagemTexto(msg)
+    setMensagemEditKey((k) => k + 1)
+    setMensagemModalOpen(true)
+  }, [pedidosEntregador.length, mensagemSalva])
+
+  const handleCopyMensagem = useCallback(async () => {
+    try {
+      const final = getMensagemFinal()
+      await navigator.clipboard.writeText(final)
+      showNotification('Mensagem copiada.', 'success')
+    } catch {
+      showNotification('Não foi possível copiar.', 'error')
+    }
+  }, [getMensagemFinal, showNotification])
+
+  const handleWhatsAppComMensagem = useCallback(() => {
+    const num = telefoneParaWhatsApp(modalTelefone)
+    if (!num) {
+      showNotification('Informe o número de telefone para abrir o WhatsApp.', 'error')
+      return
+    }
+    const final = getMensagemFinal()
+    const text = encodeURIComponent(final)
+    window.open(`https://wa.me/${num}?text=${text}`, '_blank', 'noopener,noreferrer')
+  }, [modalTelefone, getMensagemFinal, showNotification])
+
+  const handleModalDownloadExcel = useCallback(() => {
+    if (!pedidosFiltered?.length) {
+      showNotification('Sem dados para exportar.', 'error')
+      return
+    }
+    try {
+      const header = [...MOTORISTA_COLUMNS]
+      const rows = pedidosFiltered.map((doc) =>
+        MOTORISTA_COLUMNS.map((key) => (doc[key] != null ? String(doc[key]) : ''))
+      )
+      const sheetRows = [header, ...rows]
+      const ws = XLSX.utils.aoa_to_sheet(sheetRows)
+      const wb = XLSX.utils.book_new()
+      const sheetName = modalFilter === MODAL_FILTER_ENTREGUES ? 'Entregues' : 'Não entregues'
+      XLSX.utils.book_append_sheet(wb, ws, sheetName)
+      const safe = (s) => String(s ?? '').replace(/[\\/*?[\]:]/g, '-').trim() || 'export'
+      const fileName = `resultados-consulta-${safe(modalCorreio)}-${safe(modalBase)}-${modalFilter === MODAL_FILTER_ENTREGUES ? 'entregues' : 'nao-entregues'}.xlsx`
+      XLSX.writeFile(wb, fileName)
+      showNotification('Tabela exportada em Excel.', 'success')
+    } catch (err) {
+      showNotification('Não foi possível exportar o Excel.', 'error')
+    }
+  }, [pedidosFiltered, modalFilter, modalCorreio, modalBase, showNotification])
+
+  /** Copia todos os dados em texto formatado (apenas colunas selecionadas na config). */
+  const handleModalCopyFormatted = useCallback(async () => {
+    if (!pedidosFiltered?.length) {
+      showNotification('Sem dados para copiar.', 'error')
+      return
+    }
+    const cols = columnsToCopy.length ? columnsToCopy : MOTORISTA_COLUMNS
+    const blocks = pedidosFiltered.map((doc) =>
+      cols.map((label) => `${label}: ${doc[label] != null ? String(doc[label]) : ''}`).join('\n')
+    )
+    const text = blocks.join('\n\n')
+    try {
+      await navigator.clipboard.writeText(text)
+      showNotification('Dados copiados (texto formatado).', 'success')
+    } catch {
+      showNotification('Não foi possível copiar.', 'error')
+    }
+  }, [pedidosFiltered, columnsToCopy, showNotification])
+
+  const segmentosMensagem = useMemo(() => getSegmentosMensagem(mensagemTexto), [mensagemTexto])
 
   /** Índices selecionados na tabela do modal (conforme filtro Entregues/Não entregues). */
   const [modalSelectedIndices, setModalSelectedIndices] = useState(() => new Set())
@@ -946,6 +1348,61 @@ export default function ResultadosConsulta() {
                           </span>
                         </label>
                       </div>
+                      <div className="resultados-consulta__config-filtros-wrap">
+                        <p className="resultados-consulta__config-filtros-desc">
+                          Se não selecionar nenhum, a tabela mostra todos. Ao guardar, a tabela exibe apenas os registos que correspondem à sua seleção.
+                        </p>
+                        <div className="resultados-consulta__config-filtro-group">
+                          <span className="resultados-consulta__config-filtro-label">Dias sem movimentação</span>
+                          <div className="resultados-consulta__config-filtro-list" role="group" aria-label="Dias sem movimentação">
+                            {uniqueDiasSemMovimentacao.length === 0 ? (
+                              <p className="resultados-consulta__config-filtro-empty">Carregue os dados para ver as opções.</p>
+                            ) : (
+                              uniqueDiasSemMovimentacao.map((valor) => (
+                                <label key={valor} className="resultados-consulta__config-filtro-item">
+                                  <input
+                                    type="checkbox"
+                                    checked={configDiasSelection.includes(valor)}
+                                    onChange={() => toggleConfigDias(valor)}
+                                    className="resultados-consulta__config-filtro-checkbox"
+                                  />
+                                  <span>{valor}</span>
+                                </label>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                        <div className="resultados-consulta__config-filtro-group">
+                          <span className="resultados-consulta__config-filtro-label">Bases</span>
+                          <div className="resultados-consulta__config-filtro-list" role="group" aria-label="Bases">
+                            {uniqueBases.length === 0 ? (
+                              <p className="resultados-consulta__config-filtro-empty">Carregue os dados para ver as opções.</p>
+                            ) : (
+                              uniqueBases.map((base) => (
+                                <label key={base} className="resultados-consulta__config-filtro-item">
+                                  <input
+                                    type="checkbox"
+                                    checked={configBasesSelection.includes(base)}
+                                    onChange={() => toggleConfigBase(base)}
+                                    className="resultados-consulta__config-filtro-checkbox"
+                                  />
+                                  <span>{base}</span>
+                                </label>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                        <div className="resultados-consulta__config-filtros-actions">
+                          <button
+                            type="button"
+                            className="resultados-consulta__config-filtros-btn resultados-consulta__config-filtros-btn--primary"
+                            onClick={handleSaveConfigFiltros}
+                            disabled={savingConfigFiltros}
+                          >
+                            {savingConfigFiltros ? 'A guardar…' : 'Guardar filtros'}
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </motion.div>
                 </motion.div>
@@ -1053,240 +1510,466 @@ export default function ResultadosConsulta() {
               )}
             </AnimatePresence>
             {total > 0 && (
-            <>
-            <div className="resultados-consulta__table-wrap" ref={filterDropdownRef}>
-              <div className="resultados-consulta__data-table resultados-consulta__data-table--full">
-                <DataTable
-                  headerValues={headerValuesWithTotalBadge}
-                  bodyRows={bodyRows}
-                  maxCols={maxCols}
-                  start={start}
-                  totalRows={totalGrouped}
-                  totalPages={totalPages}
-                  currentPage={currentPage}
-                  rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={VALID_ROWS_PER_PAGE}
-                  onRowsPerPageChange={handleRowsPerPageChange}
-                  onPageChange={goToPage}
-                  onHeaderClick={handleHeaderClick}
-                  activeFilterColIndices={activeFilterColIndices}
-                  onCellClick={handleCellClick}
-                  clickableColIndices={[0, 1, 3]}
-                  selectedRowId={selectedRowId}
-                />
-              </div>
-              {openFilterIndex !== null && filterDropdownAnchorRect && (
-                <div
-                  className="resultados-consulta__filter-dropdown resultados-consulta__filter-dropdown--fixed"
-                  style={{
-                    position: 'fixed',
-                    top: filterDropdownAnchorRect.top + 2,
-                    left: filterDropdownAnchorRect.left,
-                    minWidth: Math.max(filterDropdownAnchorRect.width, 200),
-                  }}
-                  onMouseDown={(e) => e.stopPropagation()}
-                >
-                  <div className="resultados-consulta__filter-dropdown-inner">
-                    {filterLoading ? (
-                      <div className="resultados-consulta__filter-loading" aria-busy="true">
-                        <span className="resultados-consulta__filter-spinner" aria-hidden />
-                        <span className="resultados-consulta__filter-loading-text">Carregando…</span>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="resultados-consulta__filter-dropdown-search-wrap">
-                          <input
-                            type="text"
-                            className="resultados-consulta__filter-dropdown-search"
-                            placeholder="Pesquisar..."
-                            value={filterSearchTerm}
-                            onChange={(e) => setFilterSearchTerm(e.target.value)}
-                            onMouseDown={(e) => e.stopPropagation()}
-                          />
-                        </div>
-                        <div className="resultados-consulta__filter-dropdown-list">
-                          <div className="resultados-consulta__filter-menu">
-                            {getUniqueColumnValues(openFilterIndex)
-                              .filter((optionValue) =>
-                                String(optionValue).toLowerCase().includes(filterSearchTerm.trim().toLowerCase())
-                              )
-                              .map((optionValue) => {
-                                const checked = isColumnFilterValueSelected(openFilterIndex, optionValue)
-                                return (
-                                  <button
-                                    key={optionValue}
-                                    type="button"
-                                    className={`resultados-consulta__filter-menu-item ${checked ? 'resultados-consulta__filter-menu-item--selected' : ''}`}
-                                    onClick={(e) => {
-                                      e.preventDefault()
-                                      e.stopPropagation()
-                                      toggleFilterValue(openFilterIndex, optionValue)
-                                    }}
-                                  >
-                                    <span className="resultados-consulta__filter-menu-icon" aria-hidden>
-                                      {checked ? (
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
-                                      ) : (
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="3" /></svg>
-                                      )}
-                                    </span>
-                                    <span className="resultados-consulta__filter-menu-text">{optionValue}</span>
-                                  </button>
-                                )
-                              })}
+              <>
+                <div className="resultados-consulta__table-wrap" ref={filterDropdownRef}>
+                  <div className="resultados-consulta__data-table resultados-consulta__data-table--full">
+                    <DataTable
+                      headerValues={headerValuesWithTotalBadge}
+                      bodyRows={bodyRows}
+                      maxCols={maxCols}
+                      start={start}
+                      totalRows={totalGrouped}
+                      totalPages={totalPages}
+                      currentPage={currentPage}
+                      rowsPerPage={rowsPerPage}
+                      rowsPerPageOptions={VALID_ROWS_PER_PAGE}
+                      onRowsPerPageChange={handleRowsPerPageChange}
+                      onPageChange={goToPage}
+                      onHeaderClick={handleHeaderClick}
+                      activeFilterColIndices={activeFilterColIndices}
+                      onCellClick={handleCellClick}
+                      clickableColIndices={[0, 1, 3]}
+                      selectedRowId={selectedRowId}
+                    />
+                  </div>
+                  {openFilterIndex !== null && filterDropdownAnchorRect && (
+                    <div
+                      className="resultados-consulta__filter-dropdown resultados-consulta__filter-dropdown--fixed"
+                      style={{
+                        position: 'fixed',
+                        top: filterDropdownAnchorRect.top + 2,
+                        left: filterDropdownAnchorRect.left,
+                        minWidth: Math.max(filterDropdownAnchorRect.width, 200),
+                      }}
+                      onMouseDown={(e) => e.stopPropagation()}
+                    >
+                      <div className="resultados-consulta__filter-dropdown-inner">
+                        {filterLoading ? (
+                          <div className="resultados-consulta__filter-loading" aria-busy="true">
+                            <span className="resultados-consulta__filter-spinner" aria-hidden />
+                            <span className="resultados-consulta__filter-loading-text">Carregando…</span>
                           </div>
-                        </div>
-                        <div className="resultados-consulta__filter-dropdown-footer">
-                          <div className="resultados-consulta__filter-menu-separator" />
+                        ) : (
+                          <>
+                            <div className="resultados-consulta__filter-dropdown-search-wrap">
+                              <input
+                                type="text"
+                                className="resultados-consulta__filter-dropdown-search"
+                                placeholder="Pesquisar..."
+                                value={filterSearchTerm}
+                                onChange={(e) => setFilterSearchTerm(e.target.value)}
+                                onMouseDown={(e) => e.stopPropagation()}
+                              />
+                            </div>
+                            <div className="resultados-consulta__filter-dropdown-list">
+                              <div className="resultados-consulta__filter-menu">
+                                {getUniqueColumnValues(openFilterIndex)
+                                  .filter((optionValue) =>
+                                    String(optionValue).toLowerCase().includes(filterSearchTerm.trim().toLowerCase())
+                                  )
+                                  .map((optionValue) => {
+                                    const checked = isColumnFilterValueSelected(openFilterIndex, optionValue)
+                                    return (
+                                      <button
+                                        key={optionValue}
+                                        type="button"
+                                        className={`resultados-consulta__filter-menu-item ${checked ? 'resultados-consulta__filter-menu-item--selected' : ''}`}
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          e.stopPropagation()
+                                          toggleFilterValue(openFilterIndex, optionValue)
+                                        }}
+                                      >
+                                        <span className="resultados-consulta__filter-menu-icon" aria-hidden>
+                                          {checked ? (
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
+                                          ) : (
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="3" /></svg>
+                                          )}
+                                        </span>
+                                        <span className="resultados-consulta__filter-menu-text">{optionValue}</span>
+                                      </button>
+                                    )
+                                  })}
+                              </div>
+                            </div>
+                            <div className="resultados-consulta__filter-dropdown-footer">
+                              <div className="resultados-consulta__filter-menu-separator" />
+                              <button
+                                type="button"
+                                className="resultados-consulta__filter-menu-item resultados-consulta__filter-menu-item--action"
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                  clearColumnFilter(openFilterIndex)
+                                }}
+                              >
+                                <span className="resultados-consulta__filter-menu-icon" aria-hidden>
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                                </span>
+                                <span className="resultados-consulta__filter-menu-text">Limpar filtro</span>
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <AnimatePresence>
+                  {modalAberto && (
+                    <motion.div
+                      key="resultados-consulta-modal-entregador"
+                      className="resultados-consulta__modal-overlay"
+                      variants={overlayVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      transition={transition}
+                      role="dialog"
+                      aria-modal="true"
+                      aria-labelledby="resultados-consulta-modal-title"
+                    >
+                      <motion.div
+                        className="resultados-consulta__modal"
+                        variants={modalContentVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        transition={transition}
+                      >
+                        <div className="resultados-consulta__modal-header resultados-consulta__modal-header--dark">
+                          <Logo jtColor="white" className="resultados-consulta__modal-header-logo" />
+                          <p id="resultados-consulta-modal-title" className="resultados-consulta__modal-header-info">
+                            Pedidos do entregador {(modalEntregador || modalPending)?.correio ?? '(vazio)'} <br />
+                            {(modalEntregador || modalPending)?.base ? ` — ${(modalEntregador || modalPending).base}` : ''} <br />
+                            {(modalEntregador || modalPending) && (
+                              <span className="resultados-consulta__modal-header-total">
+                                — {pedidosEntregador.length} pedido{pedidosEntregador.length !== 1 ? 's' : ''}
+                              </span>
+                            )}
+                          </p>
                           <button
                             type="button"
-                            className="resultados-consulta__filter-menu-item resultados-consulta__filter-menu-item--action"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              clearColumnFilter(openFilterIndex)
-                            }}
+                            className="resultados-consulta__modal-btn-close resultados-consulta__modal-btn-close--dark"
+                            onClick={closeModal}
+                            aria-label="Fechar"
                           >
-                            <span className="resultados-consulta__filter-menu-icon" aria-hidden>
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
-                            </span>
-                            <span className="resultados-consulta__filter-menu-text">Limpar filtro</span>
+                            <MdClose size={22} aria-hidden />
                           </button>
                         </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-            <AnimatePresence>
-              {modalAberto && (
-                <motion.div
-                  key="resultados-consulta-modal-entregador"
-                  className="resultados-consulta__modal-overlay"
-                  variants={overlayVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  transition={transition}
-                  role="dialog"
-                  aria-modal="true"
-                  aria-labelledby="resultados-consulta-modal-title"
-                >
-                  <motion.div
-                    className="resultados-consulta__modal"
-                    variants={modalContentVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    transition={transition}
-                  >
-                    <div className="resultados-consulta__modal-header">
-                      <div>
-                        <h2 id="resultados-consulta-modal-title" className="resultados-consulta__modal-title">
-                          Pedidos do entregador
-                        </h2>
-                        <p className="resultados-consulta__modal-subtitle">
-                          <span className="resultados-consulta__modal-subtitle-name">
-                            {(modalEntregador || modalPending)?.correio ?? '(vazio)'}
-                            {(modalEntregador || modalPending)?.base ? ` — ${(modalEntregador || modalPending).base}` : ''}
-                          </span>
-                          {(modalEntregador || modalPending) && (
-                            <span className="resultados-consulta__modal-subtitle-total">
-                              — {pedidosEntregador.length} pedido{pedidosEntregador.length !== 1 ? 's' : ''}
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        className="resultados-consulta__modal-btn-close"
-                        onClick={closeModal}
-                        aria-label="Fechar"
-                      >
-                        <MdClose size={22} aria-hidden />
-                      </button>
-                    </div>
-                    <div className="resultados-consulta__modal-tabs">
-                      <button
-                        type="button"
-                        className={`resultados-consulta__modal-tab ${modalFilter === MODAL_FILTER_ENTREGUES ? 'resultados-consulta__modal-tab--active' : ''}`}
-                        onClick={() => setModalFilterAndSave(MODAL_FILTER_ENTREGUES)}
-                        aria-pressed={modalFilter === MODAL_FILTER_ENTREGUES}
-                      >
-                        <span className="resultados-consulta__modal-tab-label">Entregues</span>
-                        <span className="resultados-consulta__modal-tab-total">{modalTotais.entregues}</span>
-                      </button>
-                      <button
-                        type="button"
-                        className={`resultados-consulta__modal-tab ${modalFilter === MODAL_FILTER_NAO_ENTREGUES ? 'resultados-consulta__modal-tab--active' : ''}`}
-                        onClick={() => setModalFilterAndSave(MODAL_FILTER_NAO_ENTREGUES)}
-                        aria-pressed={modalFilter === MODAL_FILTER_NAO_ENTREGUES}
-                      >
-                        <span className="resultados-consulta__modal-tab-label">Não entregues</span>
-                        <span className="resultados-consulta__modal-tab-total">{modalTotais.naoEntregues}</span>
-                      </button>
-                    </div>
-                    <div className="resultados-consulta__modal-table-wrap">
-                      {(!modalEntregador || !modalContentReady) ? (
-                        <div className="resultados-consulta__modal-loading">
-                          <Loader text="A carregar…" size="sm" />
+                        <div className="resultados-consulta__modal-tabs">
+                          <div className="resultados-consulta__modal-tabs-buttons">
+                            <button
+                              type="button"
+                              className={`resultados-consulta__modal-tab ${modalFilter === MODAL_FILTER_ENTREGUES ? 'resultados-consulta__modal-tab--active' : ''}`}
+                              onClick={() => setModalFilterAndSave(MODAL_FILTER_ENTREGUES)}
+                              aria-pressed={modalFilter === MODAL_FILTER_ENTREGUES}
+                            >
+                              <span className="resultados-consulta__modal-tab-label">Entregues</span>
+                              <span className="resultados-consulta__modal-tab-total">{modalTotais.entregues}</span>
+                            </button>
+                            <button
+                              type="button"
+                              className={`resultados-consulta__modal-tab ${modalFilter === MODAL_FILTER_NAO_ENTREGUES ? 'resultados-consulta__modal-tab--active' : ''}`}
+                              onClick={() => setModalFilterAndSave(MODAL_FILTER_NAO_ENTREGUES)}
+                              aria-pressed={modalFilter === MODAL_FILTER_NAO_ENTREGUES}
+                            >
+                              <span className="resultados-consulta__modal-tab-label">Não entregues</span>
+                              <span className="resultados-consulta__modal-tab-total">{modalTotais.naoEntregues}</span>
+                            </button>
+                          </div>
+                          <div className="resultados-consulta__modal-toolbar">
+                            <div className="resultados-consulta__modal-phone-wrap">
+                              <input
+                                id="resultados-consulta-modal-phone"
+                                type="tel"
+                                className="resultados-consulta__modal-phone-input"
+                                placeholder={modalContatoDocId ? 'Telefone' : 'Adicionar número (guardar na lista de telefones)'}
+                                value={modalTelefone}
+                                onChange={(e) => setModalTelefone(e.target.value)}
+                                readOnly={!!modalContatoDocId && !modalPhoneEditing}
+                                aria-label="Telefone"
+                              />
+                              {modalContatoDocId && !modalPhoneEditing && (
+                                <button
+                                  type="button"
+                                  className="resultados-consulta__modal-action-btn resultados-consulta__modal-phone-edit-btn"
+                                  title="Editar telefone"
+                                  aria-label="Editar telefone"
+                                  onClick={() => setModalPhoneEditing(true)}
+                                >
+                                  <MdEdit className="resultados-consulta__modal-action-icon" aria-hidden />
+                                </button>
+                              )}
+                              {(!modalContatoDocId || modalPhoneEditing) && (
+                                <button
+                                  type="button"
+                                  className="resultados-consulta__modal-action-btn resultados-consulta__modal-phone-save-btn"
+                                  title={modalContatoDocId ? 'Guardar telefone' : 'Guardar número na lista de telefones'}
+                                  aria-label={modalContatoDocId ? 'Guardar telefone' : 'Guardar número na lista de telefones'}
+                                  disabled={modalSavingContato}
+                                  onClick={handleModalSaveContato}
+                                >
+                                  <MdCheck className="resultados-consulta__modal-action-icon" aria-hidden />
+                                </button>
+                              )}
+                            </div>
+                            <div className="resultados-consulta__modal-toolbar-actions">
+                              <button
+                                type="button"
+                                className="resultados-consulta__modal-action-btn"
+                                title="Copiar todos os dados (texto formatado)"
+                                aria-label="Copiar todos os dados (texto formatado)"
+                                disabled={!pedidosFiltered?.length}
+                                onClick={handleModalCopyFormatted}
+                              >
+                                <MdContentCopy className="resultados-consulta__modal-action-icon" aria-hidden />
+                              </button>
+                              <button
+                                type="button"
+                                className="resultados-consulta__modal-action-btn"
+                                title="Descarregar tabela em Excel"
+                                aria-label="Descarregar tabela em Excel"
+                                disabled={!pedidosFiltered?.length}
+                                onClick={handleModalDownloadExcel}
+                              >
+                                <MdDownload className="resultados-consulta__modal-action-icon" aria-hidden />
+                              </button>
+                              <button
+                                type="button"
+                                className="resultados-consulta__modal-action-btn"
+                                title="Configurações — colunas a copiar"
+                                aria-label="Configurações — colunas a copiar"
+                                onClick={openModalConfigColunas}
+                              >
+                                <MdSettings className="resultados-consulta__modal-action-icon" aria-hidden />
+                              </button>
+                              <button
+                                type="button"
+                                className="resultados-consulta__modal-action-btn"
+                                title="Escrever mensagem para envio"
+                                aria-label="Escrever mensagem para envio"
+                                onClick={handleOpenMensagemModal}
+                              >
+                                <MdMessage className="resultados-consulta__modal-action-icon" aria-hidden />
+                              </button>
+                              <button
+                                type="button"
+                                className="resultados-consulta__modal-action-btn resultados-consulta__modal-action-btn--whatsapp"
+                                title="Abrir WhatsApp com este número"
+                                aria-label="Abrir WhatsApp com este número"
+                                onClick={handleModalOpenWhatsApp}
+                              >
+                                <svg className="resultados-consulta__modal-action-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden>
+                                  <path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      ) : (
-                        <table className="resultados-consulta__modal-table">
-                          <thead>
-                            <tr>
-                              <th className="resultados-consulta__modal-th resultados-consulta__modal-th--select" scope="col" aria-label="Copiar todos">
-                                <label className="resultados-consulta__modal-select-all-wrap">
-                                  <input
-                                    ref={modalSelectAllRef}
-                                    type="checkbox"
-                                    className="resultados-consulta__modal-checkbox"
-                                    checked={modalSelectAllChecked}
-                                    onChange={toggleModalSelectAll}
-                                    aria-label="Copiar todos os números JMS da lista"
-                                  />
-                                </label>
-                              </th>
-                              <th className="resultados-consulta__modal-th resultados-consulta__modal-th--id">ID</th>
-                              {MOTORISTA_COLUMNS.map((col, i) => (
-                                <th key={i} className="resultados-consulta__modal-th">{col}</th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {pedidosFiltered.map((doc, i) => (
-                              <tr key={i}>
-                                <td className="resultados-consulta__modal-td resultados-consulta__modal-td--select">
-                                  <label className="resultados-consulta__modal-row-select-wrap">
-                                    <input
-                                      type="checkbox"
-                                      className="resultados-consulta__modal-checkbox"
-                                      checked={modalSelectedIndices.has(i)}
-                                      onChange={() => toggleModalRowSelection(i)}
-                                      aria-label={`Copiar número JMS ${doc[NUMERO_JMS_KEY] ?? i + 1}`}
-                                    />
-                                  </label>
-                                </td>
-                                <td className="resultados-consulta__modal-td resultados-consulta__modal-td--id">
-                                  {String(i + 1).padStart(2, '0')}
-                                </td>
-                                {MOTORISTA_COLUMNS.map((key, j) => (
-                                  <td key={j} className="resultados-consulta__modal-td">
-                                    {doc[key] != null ? String(doc[key]) : ''}
-                                  </td>
+                        <div className="resultados-consulta__modal-table-wrap">
+                          {(!modalEntregador || !modalContentReady) ? (
+                            <div className="resultados-consulta__modal-loading">
+                              <Loader text="A carregar…" size="sm" />
+                            </div>
+                          ) : (
+                            <table className="resultados-consulta__modal-table">
+                              <thead>
+                                <tr>
+                                  <th className="resultados-consulta__modal-th resultados-consulta__modal-th--select" scope="col" aria-label="Copiar todos">
+                                    <label className="resultados-consulta__modal-select-all-wrap">
+                                      <input
+                                        ref={modalSelectAllRef}
+                                        type="checkbox"
+                                        className="resultados-consulta__modal-checkbox"
+                                        checked={modalSelectAllChecked}
+                                        onChange={toggleModalSelectAll}
+                                        aria-label="Copiar todos os números JMS da lista"
+                                      />
+                                    </label>
+                                  </th>
+                                  <th className="resultados-consulta__modal-th resultados-consulta__modal-th--id">ID</th>
+                                  {MOTORISTA_COLUMNS.map((col, i) => (
+                                    <th key={i} className="resultados-consulta__modal-th">{col}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {pedidosFiltered.map((doc, i) => (
+                                  <tr key={i}>
+                                    <td className="resultados-consulta__modal-td resultados-consulta__modal-td--select">
+                                      <label className="resultados-consulta__modal-row-select-wrap">
+                                        <input
+                                          type="checkbox"
+                                          className="resultados-consulta__modal-checkbox"
+                                          checked={modalSelectedIndices.has(i)}
+                                          onChange={() => toggleModalRowSelection(i)}
+                                          aria-label={`Copiar número JMS ${doc[NUMERO_JMS_KEY] ?? i + 1}`}
+                                        />
+                                      </label>
+                                    </td>
+                                    <td className="resultados-consulta__modal-td resultados-consulta__modal-td--id">
+                                      {String(i + 1).padStart(2, '0')}
+                                    </td>
+                                    {MOTORISTA_COLUMNS.map((key, j) => (
+                                      <td key={j} className="resultados-consulta__modal-td">
+                                        {doc[key] != null ? String(doc[key]) : ''}
+                                      </td>
+                                    ))}
+                                  </tr>
                                 ))}
-                              </tr>
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  )}
+                  {modalAberto && mensagemModalOpen && (
+                    <motion.div
+                      key="resultados-consulta-mensagem-modal-overlay"
+                      className="resultados-consulta__modal-overlay resultados-consulta__mensagem-modal-overlay"
+                      role="dialog"
+                      aria-modal="true"
+                      aria-labelledby="resultados-consulta-mensagem-modal-title"
+                      variants={overlayVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      transition={transition}
+                      onClick={() => setMensagemModalOpen(false)}
+                    >
+                      <motion.div
+                        className="resultados-consulta__modal resultados-consulta__mensagem-modal"
+                        variants={modalContentVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        transition={transition}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="resultados-consulta__mensagem-modal-header">
+                          <h2 id="resultados-consulta-mensagem-modal-title" className="resultados-consulta__mensagem-modal-title">
+                            Mensagem para envio
+                          </h2>
+                          <button type="button" className="resultados-consulta__mensagem-modal-close" onClick={() => setMensagemModalOpen(false)} aria-label="Fechar">
+                            <MdClose size={22} aria-hidden />
+                          </button>
+                        </div>
+                        <div className="resultados-consulta__mensagem-modal-body">
+                          <label className="resultados-consulta__mensagem-modal-label" id="resultados-consulta-mensagem-label">
+                            Mensagem (pode editar; os textos entre parênteses não podem ser apagados):
+                          </label>
+                          <div
+                            key={mensagemEditKey}
+                            ref={mensagemEditRef}
+                            id="resultados-consulta-mensagem-texto"
+                            className="resultados-consulta__mensagem-modal-textarea resultados-consulta__mensagem-modal-edit"
+                            contentEditable
+                            suppressContentEditableWarning
+                            onInput={handleMensagemTextoChange}
+                            onPaste={handleMensagemPaste}
+                            role="textbox"
+                            aria-label="Mensagem para envio"
+                            aria-labelledby="resultados-consulta-mensagem-label"
+                            data-placeholder="Digite a mensagem..."
+                          >
+                            {segmentosMensagem.map((seg, i) =>
+                              seg.type === 'placeholder' ? (
+                                <span key={`${i}-${seg.value}`} className="resultados-consulta__mensagem-placeholder" contentEditable={false} suppressContentEditableWarning>
+                                  {seg.value}
+                                </span>
+                              ) : (
+                                seg.value
+                              )
+                            )}
+                          </div>
+                          <div className="resultados-consulta__mensagem-modal-actions">
+                            <button type="button" className="resultados-consulta__mensagem-modal-btn resultados-consulta__mensagem-modal-btn--save" onClick={handleGuardarMensagem} disabled={savingMensagem}>
+                              {savingMensagem ? 'A guardar…' : 'Guardar no servidor'}
+                            </button>
+                            <button type="button" className="resultados-consulta__mensagem-modal-btn resultados-consulta__mensagem-modal-btn--copy" onClick={handleCopyMensagem}>
+                              Copiar mensagem
+                            </button>
+                            <button type="button" className="resultados-consulta__mensagem-modal-btn resultados-consulta__mensagem-modal-btn--whatsapp" onClick={handleWhatsAppComMensagem}>
+                              Abrir no WhatsApp
+                            </button>
+                            <button type="button" className="resultados-consulta__mensagem-modal-btn resultados-consulta__mensagem-modal-btn--secondary" onClick={() => setMensagemModalOpen(false)}>
+                              Fechar
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  )}
+                  {modalAberto && modalConfigColunasOpen && (
+                    <motion.div
+                      key="resultados-consulta-config-colunas-overlay"
+                      className="resultados-consulta__modal-overlay resultados-consulta__mensagem-modal-overlay"
+                      role="dialog"
+                      aria-modal="true"
+                      aria-labelledby="resultados-consulta-config-colunas-title"
+                      variants={overlayVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      transition={transition}
+                      onClick={() => setModalConfigColunasOpen(false)}
+                    >
+                      <motion.div
+                        className="resultados-consulta__modal resultados-consulta__config-colunas-modal"
+                        variants={modalContentVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        transition={transition}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="resultados-consulta__mensagem-modal-header">
+                          <h2 id="resultados-consulta-config-colunas-title" className="resultados-consulta__mensagem-modal-title">
+                            Colunas a copiar
+                          </h2>
+                          <button type="button" className="resultados-consulta__mensagem-modal-close" onClick={() => setModalConfigColunasOpen(false)} aria-label="Fechar">
+                            <MdClose size={22} aria-hidden />
+                          </button>
+                        </div>
+                        <div className="resultados-consulta__config-colunas-body">
+                          <p className="resultados-consulta__config-colunas-desc">
+                            Selecione as colunas que o botão Copiar incluirá no texto formatado.
+                          </p>
+                          <div className="resultados-consulta__config-colunas-list" role="group" aria-labelledby="resultados-consulta-config-colunas-title">
+                            {MOTORISTA_COLUMNS.map((col) => (
+                              <label key={col} className="resultados-consulta__config-colunas-item">
+                                <input
+                                  type="checkbox"
+                                  checked={modalConfigColunasSelection.includes(col)}
+                                  onChange={() => toggleModalConfigColuna(col)}
+                                  className="resultados-consulta__config-colunas-checkbox"
+                                />
+                                <span className="resultados-consulta__config-colunas-label">{col}</span>
+                              </label>
                             ))}
-                          </tbody>
-                        </table>
-                      )}
-                    </div>
-                  </motion.div>
-                </motion.div>
-              )}
+                          </div>
+                          <div className="resultados-consulta__mensagem-modal-actions">
+                            <button
+                              type="button"
+                              className="resultados-consulta__mensagem-modal-btn resultados-consulta__mensagem-modal-btn--save"
+                              onClick={handleSaveConfigColunas}
+                              disabled={savingConfigColunas || modalConfigColunasSelection.length === 0}
+                            >
+                              {savingConfigColunas ? 'A guardar…' : 'Guardar'}
+                            </button>
+                            <button type="button" className="resultados-consulta__mensagem-modal-btn resultados-consulta__mensagem-modal-btn--secondary" onClick={() => setModalConfigColunasOpen(false)}>
+                              Fechar
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  )}
             </AnimatePresence>
-            </>
+              </>
             )}
           </>
         )}

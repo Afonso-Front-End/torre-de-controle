@@ -14,6 +14,7 @@ export const EVOLUCAO_DATAS_STORAGE_KEY = 'evolucao-selected-datas'
 export const MODAL_FILTER_ENTREGUES = 'entregues'
 export const MODAL_FILTER_NAO_ENTREGUES = 'naoEntregues'
 export const BASE_KEY = 'Base de entrega'
+export const DIAS_SEM_MOVIMENTACAO_KEY = 'Dias sem movimentação'
 export const MARCA_KEY = 'Marca de assinatura'
 export const NUMERO_JMS_KEY = 'Número de pedido JMS'
 export const PER_PAGE_FETCH = 500

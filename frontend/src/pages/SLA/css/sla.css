@@ -400,6 +400,88 @@
   pointer-events: none;
 }
 
+.sla__atualizar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.sla__atualizar-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  min-width: 240px;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 4px 10px -6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 20;
+}
+
+.sla__atualizar-dropdown-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #374151;
+  margin: 0;
+}
+
+.sla__select-data-atualizar {
+  height: 40px;
+  padding: 0 0.5rem 0 0.75rem;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  color: #111827;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+.sla__select-data-atualizar:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.sla__btn-adicionar-ficheiro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 40px;
+  padding: 0 1rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: #111827;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.sla__btn-adicionar-ficheiro:hover:not(:disabled) {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+.sla__btn-adicionar-ficheiro:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sla__btn-adicionar-ficheiro-icon {
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
 .sla__btn-atualizar {
   display: inline-flex;
   align-items: center;
@@ -414,6 +496,11 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.sla__btn-atualizar--open {
+  background: #f3f4f6;
+  border-color: #d1d5db;
 }
 
 .sla__btn-atualizar:hover:not(:disabled) {
@@ -458,12 +545,13 @@
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   padding: 1rem;
 }
 
 .sla__loading-modal {
   background: #fff;
-  border-radius: 12px;
+  /* border-radius: 12px; */
   padding: 1.5rem 2rem;
   max-width: 380px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
@@ -478,13 +566,101 @@
   width: 40px;
   height: 40px;
   border: 3px solid #e5e7eb;
-  border-top-color: #3b82f6;
+  border-top-color: #000000;
   border-radius: 50%;
   animation: sla__loading-spin 0.8s linear infinite;
 }
 
+/* Spinner segmentado (estilo da imagem: ~12 segmentos em cinza, texto "Loading..." abaixo) */
+.sla__loading-spinner-segments {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 180deg,
+    #374151 0deg,
+    #4b5563 30deg,
+    #6b7280 60deg,
+    #9ca3af 90deg,
+    #d1d5db 120deg,
+    #e5e7eb 150deg,
+    #f9fafb 180deg,
+    #e5e7eb 210deg,
+    #d1d5db 240deg,
+    #9ca3af 270deg,
+    #6b7280 300deg,
+    #4b5563 330deg,
+    #374151 360deg
+  );
+  /* Máscara: 12 segmentos (24deg cada) com pequena falha (4deg) entre eles */
+  -webkit-mask-image: conic-gradient(
+    from -6deg,
+    transparent 0deg 4deg,
+    black 4deg 28deg,
+    transparent 28deg 34deg,
+    black 34deg 58deg,
+    transparent 58deg 64deg,
+    black 64deg 88deg,
+    transparent 88deg 94deg,
+    black 94deg 118deg,
+    transparent 118deg 124deg,
+    black 124deg 148deg,
+    transparent 148deg 154deg,
+    black 154deg 178deg,
+    transparent 178deg 184deg,
+    black 184deg 208deg,
+    transparent 208deg 214deg,
+    black 214deg 238deg,
+    transparent 238deg 244deg,
+    black 244deg 268deg,
+    transparent 268deg 274deg,
+    black 274deg 298deg,
+    transparent 298deg 304deg,
+    black 304deg 328deg,
+    transparent 328deg 334deg,
+    black 334deg 358deg,
+    transparent 358deg 364deg
+  );
+  mask-image: conic-gradient(
+    from -6deg,
+    transparent 0deg 4deg,
+    black 4deg 28deg,
+    transparent 28deg 34deg,
+    black 34deg 58deg,
+    transparent 58deg 64deg,
+    black 64deg 88deg,
+    transparent 88deg 94deg,
+    black 94deg 118deg,
+    transparent 118deg 124deg,
+    black 124deg 148deg,
+    transparent 148deg 154deg,
+    black 154deg 178deg,
+    transparent 178deg 184deg,
+    black 184deg 208deg,
+    transparent 208deg 214deg,
+    black 214deg 238deg,
+    transparent 238deg 244deg,
+    black 244deg 268deg,
+    transparent 268deg 274deg,
+    black 274deg 298deg,
+    transparent 298deg 304deg,
+    black 304deg 328deg,
+    transparent 328deg 334deg,
+    black 334deg 358deg,
+    transparent 358deg 364deg
+  );
+  animation: sla__loading-spin 1s linear infinite;
+}
+
 @keyframes sla__loading-spin {
   to { transform: rotate(360deg); }
+}
+
+.sla__loading-label {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: #111827;
+  font-family: inherit;
 }
 
 .sla__loading-title {

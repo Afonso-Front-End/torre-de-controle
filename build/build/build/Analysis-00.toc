@@ -37,11 +37,50 @@
  {},
  0,
  [],
- [('frontend_dist\\assets\\index-CEG-avx9.css',
-   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-CEG-avx9.css',
+ [('frontend_dist\\assets\\Analise-Cr9sBL9i.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\Analise-Cr9sBL9i.js',
    'DATA'),
-  ('frontend_dist\\assets\\index-U4k71bap.js',
-   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-U4k71bap.js',
+  ('frontend_dist\\assets\\DataTable-CTnRraKL.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\DataTable-CTnRraKL.js',
+   'DATA'),
+  ('frontend_dist\\assets\\DateFilterSelect-BwKvMrS9.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\DateFilterSelect-BwKvMrS9.js',
+   'DATA'),
+  ('frontend_dist\\assets\\Documentacao-BjRdD4b6.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\Documentacao-BjRdD4b6.js',
+   'DATA'),
+  ('frontend_dist\\assets\\Profile-BTqLmQeW.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\Profile-BTqLmQeW.js',
+   'DATA'),
+  ('frontend_dist\\assets\\SLAPerformance-KDlKjXJ4.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\SLAPerformance-KDlKjXJ4.js',
+   'DATA'),
+  ('frontend_dist\\assets\\animations-_wWiV5hJ.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\animations-_wWiV5hJ.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-3LkuLD7K.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-3LkuLD7K.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-Cfss4heH.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-Cfss4heH.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-Ddnvrf9K.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-Ddnvrf9K.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-Dn4jJ7Ns.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-Dn4jJ7Ns.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-Do9DPZtP.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-Do9DPZtP.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-VjrihNYX.css',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-VjrihNYX.css',
+   'DATA'),
+  ('frontend_dist\\assets\\useSLATabela-BgUnF-uq.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\useSLATabela-BgUnF-uq.js',
+   'DATA'),
+  ('frontend_dist\\assets\\xlsx-BhwfF_WM.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\xlsx-BhwfF_WM.js',
    'DATA'),
   ('frontend_dist\\index.html',
    'D:\\torre-de-controle\\frontend\\dist\\index.html',
@@ -61,6 +100,9 @@
    'DATA'),
   ('server\\routers\\__pycache__\\auth.cpython-314.pyc',
    'D:\\torre-de-controle\\server\\routers\\__pycache__\\auth.cpython-314.pyc',
+   'DATA'),
+  ('server\\routers\\__pycache__\\check_update.cpython-314.pyc',
+   'D:\\torre-de-controle\\server\\routers\\__pycache__\\check_update.cpython-314.pyc',
    'DATA'),
   ('server\\routers\\__pycache__\\importe_tabela_consulta_bipagems.cpython-314.pyc',
    'D:\\torre-de-controle\\server\\routers\\__pycache__\\importe_tabela_consulta_bipagems.cpython-314.pyc',
@@ -146,17 +188,17 @@
    'DATA')],
  '3.14.0 (tags/v3.14.0:ebf955d, Oct  7 2025, 10:15:03) [MSC v.1944 64 bit '
  '(AMD64)]',
- [('pyi_rth_inspect',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_inspect.py',
-   'PYSOURCE'),
-  ('pyi_rth_pkgutil',
+ [('pyi_rth_pkgutil',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgutil.py',
    'PYSOURCE'),
   ('pyi_rth_multiprocessing',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_multiprocessing.py',
+   'PYSOURCE'),
+  ('pyi_rth_inspect',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_inspect.py',
    'PYSOURCE'),
   ('pyi_rth_setuptools',
    'C:\\Users\\Carla '
@@ -444,24 +486,6 @@
   ('multiprocessing.sharedctypes',
    'C:\\Python314\\Lib\\multiprocessing\\sharedctypes.py',
    'PYMODULE'),
-  ('ctypes', 'C:\\Python314\\Lib\\ctypes\\__init__.py', 'PYMODULE'),
-  ('ctypes.util', 'C:\\Python314\\Lib\\ctypes\\util.py', 'PYMODULE'),
-  ('ctypes._aix', 'C:\\Python314\\Lib\\ctypes\\_aix.py', 'PYMODULE'),
-  ('ctypes.macholib.dyld',
-   'C:\\Python314\\Lib\\ctypes\\macholib\\dyld.py',
-   'PYMODULE'),
-  ('ctypes.macholib',
-   'C:\\Python314\\Lib\\ctypes\\macholib\\__init__.py',
-   'PYMODULE'),
-  ('ctypes.macholib.dylib',
-   'C:\\Python314\\Lib\\ctypes\\macholib\\dylib.py',
-   'PYMODULE'),
-  ('ctypes.macholib.framework',
-   'C:\\Python314\\Lib\\ctypes\\macholib\\framework.py',
-   'PYMODULE'),
-  ('ctypes.wintypes', 'C:\\Python314\\Lib\\ctypes\\wintypes.py', 'PYMODULE'),
-  ('ctypes._endian', 'C:\\Python314\\Lib\\ctypes\\_endian.py', 'PYMODULE'),
-  ('ctypes._layout', 'C:\\Python314\\Lib\\ctypes\\_layout.py', 'PYMODULE'),
   ('multiprocessing.pool',
    'C:\\Python314\\Lib\\multiprocessing\\pool.py',
    'PYMODULE'),
@@ -788,6 +812,7 @@
   ('_pyrepl.windows_eventqueue',
    'C:\\Python314\\Lib\\_pyrepl\\windows_eventqueue.py',
    'PYMODULE'),
+  ('ctypes.wintypes', 'C:\\Python314\\Lib\\ctypes\\wintypes.py', 'PYMODULE'),
   ('_pyrepl.readline', 'C:\\Python314\\Lib\\_pyrepl\\readline.py', 'PYMODULE'),
   ('_pyrepl._module_completer',
    'C:\\Python314\\Lib\\_pyrepl\\_module_completer.py',
@@ -1248,26 +1273,6 @@
   ('_distutils_hack.override',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\_distutils_hack\\override.py',
-   'PYMODULE'),
-  ('dotenv',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\dotenv\\__init__.py',
-   'PYMODULE'),
-  ('dotenv.ipython',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\dotenv\\ipython.py',
-   'PYMODULE'),
-  ('dotenv.main',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\dotenv\\main.py',
-   'PYMODULE'),
-  ('dotenv.variables',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\dotenv\\variables.py',
-   'PYMODULE'),
-  ('dotenv.parser',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\dotenv\\parser.py',
    'PYMODULE'),
   ('uuid', 'C:\\Python314\\Lib\\uuid.py', 'PYMODULE'),
   ('colorsys', 'C:\\Python314\\Lib\\colorsys.py', 'PYMODULE'),
@@ -2620,6 +2625,7 @@
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy\\_core\\_dtype_ctypes.py',
    'PYMODULE'),
+  ('ctypes._layout', 'C:\\Python314\\Lib\\ctypes\\_layout.py', 'PYMODULE'),
   ('numpy._pytesttester',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy\\_pytesttester.py',
@@ -5283,6 +5289,20 @@
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cffi\\api.py',
    'PYMODULE'),
+  ('ctypes.util', 'C:\\Python314\\Lib\\ctypes\\util.py', 'PYMODULE'),
+  ('ctypes._aix', 'C:\\Python314\\Lib\\ctypes\\_aix.py', 'PYMODULE'),
+  ('ctypes.macholib.dyld',
+   'C:\\Python314\\Lib\\ctypes\\macholib\\dyld.py',
+   'PYMODULE'),
+  ('ctypes.macholib',
+   'C:\\Python314\\Lib\\ctypes\\macholib\\__init__.py',
+   'PYMODULE'),
+  ('ctypes.macholib.dylib',
+   'C:\\Python314\\Lib\\ctypes\\macholib\\dylib.py',
+   'PYMODULE'),
+  ('ctypes.macholib.framework',
+   'C:\\Python314\\Lib\\ctypes\\macholib\\framework.py',
+   'PYMODULE'),
   ('cffi.recompiler',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cffi\\recompiler.py',
@@ -7597,120 +7617,14 @@
    'PYMODULE'),
   ('_py_abc', 'C:\\Python314\\Lib\\_py_abc.py', 'PYMODULE'),
   ('_py_warnings', 'C:\\Python314\\Lib\\_py_warnings.py', 'PYMODULE'),
+  ('ctypes', 'C:\\Python314\\Lib\\ctypes\\__init__.py', 'PYMODULE'),
+  ('ctypes._endian', 'C:\\Python314\\Lib\\ctypes\\_endian.py', 'PYMODULE'),
   ('config', 'D:\\torre-de-controle\\server\\config.py', 'PYMODULE'),
   ('database', 'D:\\torre-de-controle\\server\\database.py', 'PYMODULE'),
   ('limiter', 'D:\\torre-de-controle\\server\\limiter.py', 'PYMODULE'),
   ('slowapi.util',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\slowapi\\util.py',
-   'PYMODULE'),
-  ('starlette.requests',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\requests.py',
-   'PYMODULE'),
-  ('python_multipart.multipart',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\python_multipart\\multipart.py',
-   'PYMODULE'),
-  ('python_multipart',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\python_multipart\\__init__.py',
-   'PYMODULE'),
-  ('python_multipart.exceptions',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\python_multipart\\exceptions.py',
-   'PYMODULE'),
-  ('python_multipart.decoders',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\python_multipart\\decoders.py',
-   'PYMODULE'),
-  ('starlette.routing',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\routing.py',
-   'PYMODULE'),
-  ('starlette.websockets',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\websockets.py',
-   'PYMODULE'),
-  ('starlette.responses',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\responses.py',
-   'PYMODULE'),
-  ('starlette.background',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\background.py',
-   'PYMODULE'),
-  ('starlette._compat',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\_compat.py',
-   'PYMODULE'),
-  ('starlette.middleware',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\middleware\\__init__.py',
-   'PYMODULE'),
-  ('starlette.convertors',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\convertors.py',
-   'PYMODULE'),
-  ('starlette.concurrency',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\concurrency.py',
-   'PYMODULE'),
-  ('starlette._exception_handler',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\_exception_handler.py',
-   'PYMODULE'),
-  ('starlette.applications',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\applications.py',
-   'PYMODULE'),
-  ('starlette.middleware.exceptions',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\middleware\\exceptions.py',
-   'PYMODULE'),
-  ('starlette.middleware.errors',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\middleware\\errors.py',
-   'PYMODULE'),
-  ('starlette.middleware.base',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\middleware\\base.py',
-   'PYMODULE'),
-  ('starlette',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\__init__.py',
-   'PYMODULE'),
-  ('starlette.status',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\status.py',
-   'PYMODULE'),
-  ('multipart.multipart',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\multipart\\multipart.py',
-   'PYMODULE'),
-  ('multipart',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\multipart\\__init__.py',
-   'PYMODULE'),
-  ('starlette.types',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\types.py',
-   'PYMODULE'),
-  ('starlette.formparsers',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\formparsers.py',
-   'PYMODULE'),
-  ('starlette.exceptions',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\exceptions.py',
-   'PYMODULE'),
-  ('starlette.datastructures',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\datastructures.py',
-   'PYMODULE'),
-  ('starlette._utils',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\_utils.py',
    'PYMODULE'),
   ('routers',
    'D:\\torre-de-controle\\server\\routers\\__init__.py',
@@ -7720,6 +7634,9 @@
    'PYMODULE'),
   ('routers.importe_tabela_sla',
    'D:\\torre-de-controle\\server\\routers\\importe_tabela_sla.py',
+   'PYMODULE'),
+  ('upload_limits',
+   'D:\\torre-de-controle\\server\\upload_limits.py',
    'PYMODULE'),
   ('table_ids', 'D:\\torre-de-controle\\server\\table_ids.py', 'PYMODULE'),
   ('routers.resultados_consulta',
@@ -7764,6 +7681,46 @@
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\fastapi\\security\\open_id_connect_url.py',
    'PYMODULE'),
+  ('starlette.status',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\status.py',
+   'PYMODULE'),
+  ('starlette',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\__init__.py',
+   'PYMODULE'),
+  ('starlette.exceptions',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\exceptions.py',
+   'PYMODULE'),
+  ('starlette.middleware.exceptions',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\middleware\\exceptions.py',
+   'PYMODULE'),
+  ('starlette.middleware',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\middleware\\__init__.py',
+   'PYMODULE'),
+  ('starlette.websockets',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\websockets.py',
+   'PYMODULE'),
+  ('starlette.types',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\types.py',
+   'PYMODULE'),
+  ('starlette._exception_handler',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\_exception_handler.py',
+   'PYMODULE'),
+  ('starlette.concurrency',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\concurrency.py',
+   'PYMODULE'),
+  ('starlette._utils',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\_utils.py',
+   'PYMODULE'),
   ('fastapi.security.base',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\fastapi\\security\\base.py',
@@ -7799,6 +7756,10 @@
   ('pydantic_core',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic_core\\__init__.py',
+   'PYMODULE'),
+  ('starlette.datastructures',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\datastructures.py',
    'PYMODULE'),
   ('fastapi.types',
    'C:\\Users\\Carla '
@@ -8140,9 +8101,29 @@
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\fastapi\\background.py',
    'PYMODULE'),
+  ('starlette.background',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\background.py',
+   'PYMODULE'),
   ('fastapi.applications',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\fastapi\\applications.py',
+   'PYMODULE'),
+  ('starlette.routing',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\routing.py',
+   'PYMODULE'),
+  ('starlette.convertors',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\convertors.py',
+   'PYMODULE'),
+  ('starlette.applications',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\applications.py',
+   'PYMODULE'),
+  ('starlette.middleware.errors',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\middleware\\errors.py',
    'PYMODULE'),
   ('fastapi.utils',
    'C:\\Users\\Carla '
@@ -8164,6 +8145,30 @@
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\fastapi\\dependencies\\__init__.py',
    'PYMODULE'),
+  ('multipart.multipart',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\multipart\\multipart.py',
+   'PYMODULE'),
+  ('python_multipart.multipart',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\python_multipart\\multipart.py',
+   'PYMODULE'),
+  ('python_multipart.exceptions',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\python_multipart\\exceptions.py',
+   'PYMODULE'),
+  ('python_multipart.decoders',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\python_multipart\\decoders.py',
+   'PYMODULE'),
+  ('multipart',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\multipart\\__init__.py',
+   'PYMODULE'),
+  ('python_multipart',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\python_multipart\\__init__.py',
+   'PYMODULE'),
   ('fastapi.concurrency',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\fastapi\\concurrency.py',
@@ -8183,6 +8188,46 @@
   ('fastapi.routing',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\fastapi\\routing.py',
+   'PYMODULE'),
+  ('starlette.responses',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\responses.py',
+   'PYMODULE'),
+  ('starlette._compat',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\_compat.py',
+   'PYMODULE'),
+  ('starlette.requests',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\requests.py',
+   'PYMODULE'),
+  ('starlette.formparsers',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\formparsers.py',
+   'PYMODULE'),
+  ('starlette.middleware.base',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\starlette\\middleware\\base.py',
+   'PYMODULE'),
+  ('dotenv',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\dotenv\\__init__.py',
+   'PYMODULE'),
+  ('dotenv.ipython',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\dotenv\\ipython.py',
+   'PYMODULE'),
+  ('dotenv.main',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\dotenv\\main.py',
+   'PYMODULE'),
+  ('dotenv.variables',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\dotenv\\variables.py',
+   'PYMODULE'),
+  ('dotenv.parser',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\dotenv\\parser.py',
    'PYMODULE'),
   ('pathlib', 'C:\\Python314\\Lib\\pathlib\\__init__.py', 'PYMODULE'),
   ('pathlib._os', 'C:\\Python314\\Lib\\pathlib\\_os.py', 'PYMODULE'),
@@ -8211,7 +8256,6 @@
   ('_overlapped.pyd', 'C:\\Python314\\DLLs\\_overlapped.pyd', 'EXTENSION'),
   ('_asyncio.pyd', 'C:\\Python314\\DLLs\\_asyncio.pyd', 'EXTENSION'),
   ('_queue.pyd', 'C:\\Python314\\DLLs\\_queue.pyd', 'EXTENSION'),
-  ('_ctypes.pyd', 'C:\\Python314\\DLLs\\_ctypes.pyd', 'EXTENSION'),
   ('_multiprocessing.pyd',
    'C:\\Python314\\DLLs\\_multiprocessing.pyd',
    'EXTENSION'),
@@ -8336,6 +8380,7 @@
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy\\_core\\_multiarray_tests.cp314-win_amd64.pyd',
    'EXTENSION'),
+  ('_ctypes.pyd', 'C:\\Python314\\DLLs\\_ctypes.pyd', 'EXTENSION'),
   ('numpy\\_core\\_multiarray_umath.cp314-win_amd64.pyd',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy\\_core\\_multiarray_umath.cp314-win_amd64.pyd',
@@ -8427,16 +8472,55 @@
   ('VCRUNTIME140.dll', 'C:\\Python314\\VCRUNTIME140.dll', 'BINARY'),
   ('VCRUNTIME140_1.dll', 'C:\\Python314\\VCRUNTIME140_1.dll', 'BINARY'),
   ('libcrypto-3.dll', 'C:\\Python314\\DLLs\\libcrypto-3.dll', 'BINARY'),
-  ('libffi-8.dll', 'C:\\Python314\\DLLs\\libffi-8.dll', 'BINARY'),
   ('libssl-3.dll', 'C:\\Python314\\DLLs\\libssl-3.dll', 'BINARY'),
-  ('python3.dll', 'C:\\Python314\\python3.dll', 'BINARY')],
+  ('python3.dll', 'C:\\Python314\\python3.dll', 'BINARY'),
+  ('libffi-8.dll', 'C:\\Python314\\DLLs\\libffi-8.dll', 'BINARY')],
  [],
  [],
- [('frontend_dist\\assets\\index-CEG-avx9.css',
-   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-CEG-avx9.css',
+ [('frontend_dist\\assets\\Analise-Cr9sBL9i.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\Analise-Cr9sBL9i.js',
    'DATA'),
-  ('frontend_dist\\assets\\index-U4k71bap.js',
-   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-U4k71bap.js',
+  ('frontend_dist\\assets\\DataTable-CTnRraKL.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\DataTable-CTnRraKL.js',
+   'DATA'),
+  ('frontend_dist\\assets\\DateFilterSelect-BwKvMrS9.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\DateFilterSelect-BwKvMrS9.js',
+   'DATA'),
+  ('frontend_dist\\assets\\Documentacao-BjRdD4b6.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\Documentacao-BjRdD4b6.js',
+   'DATA'),
+  ('frontend_dist\\assets\\Profile-BTqLmQeW.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\Profile-BTqLmQeW.js',
+   'DATA'),
+  ('frontend_dist\\assets\\SLAPerformance-KDlKjXJ4.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\SLAPerformance-KDlKjXJ4.js',
+   'DATA'),
+  ('frontend_dist\\assets\\animations-_wWiV5hJ.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\animations-_wWiV5hJ.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-3LkuLD7K.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-3LkuLD7K.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-Cfss4heH.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-Cfss4heH.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-Ddnvrf9K.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-Ddnvrf9K.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-Dn4jJ7Ns.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-Dn4jJ7Ns.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-Do9DPZtP.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-Do9DPZtP.js',
+   'DATA'),
+  ('frontend_dist\\assets\\index-VjrihNYX.css',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\index-VjrihNYX.css',
+   'DATA'),
+  ('frontend_dist\\assets\\useSLATabela-BgUnF-uq.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\useSLATabela-BgUnF-uq.js',
+   'DATA'),
+  ('frontend_dist\\assets\\xlsx-BhwfF_WM.js',
+   'D:\\torre-de-controle\\frontend\\dist\\assets\\xlsx-BhwfF_WM.js',
    'DATA'),
   ('frontend_dist\\index.html',
    'D:\\torre-de-controle\\frontend\\dist\\index.html',
@@ -8456,6 +8540,9 @@
    'DATA'),
   ('server\\routers\\__pycache__\\auth.cpython-314.pyc',
    'D:\\torre-de-controle\\server\\routers\\__pycache__\\auth.cpython-314.pyc',
+   'DATA'),
+  ('server\\routers\\__pycache__\\check_update.cpython-314.pyc',
+   'D:\\torre-de-controle\\server\\routers\\__pycache__\\check_update.cpython-314.pyc',
    'DATA'),
   ('server\\routers\\__pycache__\\importe_tabela_consulta_bipagems.cpython-314.pyc',
    'D:\\torre-de-controle\\server\\routers\\__pycache__\\importe_tabela_consulta_bipagems.cpython-314.pyc',
@@ -8539,54 +8626,46 @@
   ('server\\table_ids.py',
    'D:\\torre-de-controle\\server\\table_ids.py',
    'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\METADATA',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\METADATA',
-   'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\RECORD',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\RECORD',
-   'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\INSTALLER',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\INSTALLER',
-   'DATA'),
   ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\licenses\\LICENSE',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\licenses\\LICENSE',
-   'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\REQUESTED',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\REQUESTED',
    'DATA'),
   ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\top_level.txt',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\top_level.txt',
    'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\RECORD',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\RECORD',
+   'DATA'),
   ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\WHEEL',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\WHEEL',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\INSTALLER',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\INSTALLER',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\REQUESTED',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\REQUESTED',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\METADATA',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\METADATA',
    'DATA'),
   ('setuptools\\_vendor\\jaraco\\text\\Lorem ipsum.txt',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\setuptools\\_vendor\\jaraco\\text\\Lorem '
    'ipsum.txt',
    'DATA'),
-  ('cryptography-46.0.3.dist-info\\METADATA',
+  ('cryptography-46.0.3.dist-info\\licenses\\LICENSE',
    'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cryptography-46.0.3.dist-info\\METADATA',
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cryptography-46.0.3.dist-info\\licenses\\LICENSE',
    'DATA'),
   ('cryptography-46.0.3.dist-info\\RECORD',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cryptography-46.0.3.dist-info\\RECORD',
-   'DATA'),
-  ('cryptography-46.0.3.dist-info\\licenses\\LICENSE.BSD',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cryptography-46.0.3.dist-info\\licenses\\LICENSE.BSD',
-   'DATA'),
-  ('cryptography-46.0.3.dist-info\\licenses\\LICENSE.APACHE',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cryptography-46.0.3.dist-info\\licenses\\LICENSE.APACHE',
    'DATA'),
   ('cryptography-46.0.3.dist-info\\INSTALLER',
    'C:\\Users\\Carla '
@@ -8596,9 +8675,17 @@
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cryptography-46.0.3.dist-info\\WHEEL',
    'DATA'),
-  ('cryptography-46.0.3.dist-info\\licenses\\LICENSE',
+  ('cryptography-46.0.3.dist-info\\licenses\\LICENSE.APACHE',
    'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cryptography-46.0.3.dist-info\\licenses\\LICENSE',
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cryptography-46.0.3.dist-info\\licenses\\LICENSE.APACHE',
+   'DATA'),
+  ('cryptography-46.0.3.dist-info\\METADATA',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cryptography-46.0.3.dist-info\\METADATA',
+   'DATA'),
+  ('cryptography-46.0.3.dist-info\\licenses\\LICENSE.BSD',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\cryptography-46.0.3.dist-info\\licenses\\LICENSE.BSD',
    'DATA'),
   ('certifi\\cacert.pem',
    'C:\\Users\\Carla '
@@ -8608,9 +8695,9 @@
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\certifi\\py.typed',
    'DATA'),
-  ('limits\\_version.pyi',
+  ('limits\\resources\\redis\\lua_scripts\\clear_keys.lua',
    'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\limits\\_version.pyi',
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\limits\\resources\\redis\\lua_scripts\\clear_keys.lua',
    'DATA'),
   ('limits\\resources\\redis\\lua_scripts\\acquire_moving_window.lua',
    'C:\\Users\\Carla '
@@ -8620,41 +8707,37 @@
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\limits\\resources\\redis\\lua_scripts\\sliding_window.lua',
    'DATA'),
-  ('limits\\resources\\redis\\lua_scripts\\incr_expire.lua',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\limits\\resources\\redis\\lua_scripts\\incr_expire.lua',
-   'DATA'),
   ('limits\\resources\\redis\\lua_scripts\\moving_window.lua',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\limits\\resources\\redis\\lua_scripts\\moving_window.lua',
+   'DATA'),
+  ('limits\\_version.pyi',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\limits\\_version.pyi',
    'DATA'),
   ('limits\\resources\\redis\\lua_scripts\\acquire_sliding_window.lua',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\limits\\resources\\redis\\lua_scripts\\acquire_sliding_window.lua',
    'DATA'),
+  ('limits\\resources\\redis\\lua_scripts\\incr_expire.lua',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\limits\\resources\\redis\\lua_scripts\\incr_expire.lua',
+   'DATA'),
   ('limits\\py.typed',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\limits\\py.typed',
    'DATA'),
-  ('limits\\resources\\redis\\lua_scripts\\clear_keys.lua',
+  ('websockets-15.0.1.dist-info\\METADATA',
    'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\limits\\resources\\redis\\lua_scripts\\clear_keys.lua',
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets-15.0.1.dist-info\\METADATA',
    'DATA'),
-  ('attrs-25.4.0.dist-info\\METADATA',
+  ('numpy-2.3.5.dist-info\\METADATA',
    'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\attrs-25.4.0.dist-info\\METADATA',
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\METADATA',
    'DATA'),
-  ('numpy-2.3.5.dist-info\\WHEEL',
+  ('attrs-25.4.0.dist-info\\RECORD',
    'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\WHEEL',
-   'DATA'),
-  ('websockets-15.0.1.dist-info\\top_level.txt',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets-15.0.1.dist-info\\top_level.txt',
-   'DATA'),
-  ('click-8.3.1.dist-info\\licenses\\LICENSE.txt',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\click-8.3.1.dist-info\\licenses\\LICENSE.txt',
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\attrs-25.4.0.dist-info\\RECORD',
    'DATA'),
   ('websockets-15.0.1.dist-info\\WHEEL',
    'C:\\Users\\Carla '
@@ -8664,9 +8747,29 @@
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets-15.0.1.dist-info\\INSTALLER',
    'DATA'),
-  ('numpy-2.3.5.dist-info\\INSTALLER',
+  ('numpy-2.3.5.dist-info\\entry_points.txt',
    'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\INSTALLER',
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\entry_points.txt',
+   'DATA'),
+  ('click-8.3.1.dist-info\\WHEEL',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\click-8.3.1.dist-info\\WHEEL',
+   'DATA'),
+  ('click-8.3.1.dist-info\\RECORD',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\click-8.3.1.dist-info\\RECORD',
+   'DATA'),
+  ('websockets-15.0.1.dist-info\\entry_points.txt',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets-15.0.1.dist-info\\entry_points.txt',
+   'DATA'),
+  ('numpy-2.3.5.dist-info\\RECORD',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\RECORD',
+   'DATA'),
+  ('numpy-2.3.5.dist-info\\LICENSE.txt',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\LICENSE.txt',
    'DATA'),
   ('websockets-15.0.1.dist-info\\RECORD',
    'C:\\Users\\Carla '
@@ -8676,78 +8779,68 @@
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\click-8.3.1.dist-info\\INSTALLER',
    'DATA'),
-  ('numpy-2.3.5.dist-info\\entry_points.txt',
+  ('click-8.3.1.dist-info\\METADATA',
    'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\entry_points.txt',
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\click-8.3.1.dist-info\\METADATA',
+   'DATA'),
+  ('websockets-15.0.1.dist-info\\top_level.txt',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets-15.0.1.dist-info\\top_level.txt',
+   'DATA'),
+  ('numpy-2.3.5.dist-info\\WHEEL',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\WHEEL',
    'DATA'),
   ('attrs-25.4.0.dist-info\\WHEEL',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\attrs-25.4.0.dist-info\\WHEEL',
    'DATA'),
-  ('numpy-2.3.5.dist-info\\METADATA',
+  ('numpy-2.3.5.dist-info\\INSTALLER',
    'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\METADATA',
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\INSTALLER',
+   'DATA'),
+  ('click-8.3.1.dist-info\\licenses\\LICENSE.txt',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\click-8.3.1.dist-info\\licenses\\LICENSE.txt',
    'DATA'),
   ('attrs-25.4.0.dist-info\\licenses\\LICENSE',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\attrs-25.4.0.dist-info\\licenses\\LICENSE',
    'DATA'),
-  ('numpy-2.3.5.dist-info\\RECORD',
+  ('attrs-25.4.0.dist-info\\INSTALLER',
    'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\RECORD',
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\attrs-25.4.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('attrs-25.4.0.dist-info\\METADATA',
+   'C:\\Users\\Carla '
+   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\attrs-25.4.0.dist-info\\METADATA',
    'DATA'),
   ('numpy-2.3.5.dist-info\\DELVEWHEEL',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\DELVEWHEEL',
    'DATA'),
-  ('numpy-2.3.5.dist-info\\LICENSE.txt',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\numpy-2.3.5.dist-info\\LICENSE.txt',
-   'DATA'),
-  ('attrs-25.4.0.dist-info\\RECORD',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\attrs-25.4.0.dist-info\\RECORD',
-   'DATA'),
   ('websockets-15.0.1.dist-info\\LICENSE',
    'C:\\Users\\Carla '
    'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets-15.0.1.dist-info\\LICENSE',
    'DATA'),
-  ('websockets-15.0.1.dist-info\\entry_points.txt',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets-15.0.1.dist-info\\entry_points.txt',
-   'DATA'),
-  ('websockets-15.0.1.dist-info\\METADATA',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets-15.0.1.dist-info\\METADATA',
-   'DATA'),
-  ('click-8.3.1.dist-info\\WHEEL',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\click-8.3.1.dist-info\\WHEEL',
-   'DATA'),
-  ('click-8.3.1.dist-info\\METADATA',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\click-8.3.1.dist-info\\METADATA',
-   'DATA'),
-  ('attrs-25.4.0.dist-info\\INSTALLER',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\attrs-25.4.0.dist-info\\INSTALLER',
-   'DATA'),
-  ('click-8.3.1.dist-info\\RECORD',
-   'C:\\Users\\Carla '
-   'Ribeiro\\AppData\\Roaming\\Python\\Python314\\site-packages\\click-8.3.1.dist-info\\RECORD',
-   'DATA'),
   ('base_library.zip',
    'D:\\torre-de-controle\\build\\build\\build\\base_library.zip',
    'DATA')],
- [('functools', 'C:\\Python314\\Lib\\functools.py', 'PYMODULE'),
+ [('ntpath', 'C:\\Python314\\Lib\\ntpath.py', 'PYMODULE'),
+  ('re._parser', 'C:\\Python314\\Lib\\re\\_parser.py', 'PYMODULE'),
+  ('re._constants', 'C:\\Python314\\Lib\\re\\_constants.py', 'PYMODULE'),
+  ('re._compiler', 'C:\\Python314\\Lib\\re\\_compiler.py', 'PYMODULE'),
+  ('re._casefix', 'C:\\Python314\\Lib\\re\\_casefix.py', 'PYMODULE'),
+  ('re', 'C:\\Python314\\Lib\\re\\__init__.py', 'PYMODULE'),
   ('_weakrefset', 'C:\\Python314\\Lib\\_weakrefset.py', 'PYMODULE'),
-  ('enum', 'C:\\Python314\\Lib\\enum.py', 'PYMODULE'),
-  ('io', 'C:\\Python314\\Lib\\io.py', 'PYMODULE'),
-  ('linecache', 'C:\\Python314\\Lib\\linecache.py', 'PYMODULE'),
+  ('weakref', 'C:\\Python314\\Lib\\weakref.py', 'PYMODULE'),
+  ('operator', 'C:\\Python314\\Lib\\operator.py', 'PYMODULE'),
+  ('collections', 'C:\\Python314\\Lib\\collections\\__init__.py', 'PYMODULE'),
+  ('posixpath', 'C:\\Python314\\Lib\\posixpath.py', 'PYMODULE'),
   ('codecs', 'C:\\Python314\\Lib\\codecs.py', 'PYMODULE'),
-  ('_collections_abc', 'C:\\Python314\\Lib\\_collections_abc.py', 'PYMODULE'),
+  ('traceback', 'C:\\Python314\\Lib\\traceback.py', 'PYMODULE'),
+  ('functools', 'C:\\Python314\\Lib\\functools.py', 'PYMODULE'),
   ('keyword', 'C:\\Python314\\Lib\\keyword.py', 'PYMODULE'),
-  ('genericpath', 'C:\\Python314\\Lib\\genericpath.py', 'PYMODULE'),
   ('encodings.zlib_codec',
    'C:\\Python314\\Lib\\encodings\\zlib_codec.py',
    'PYMODULE'),
@@ -8993,26 +9086,20 @@
    'C:\\Python314\\Lib\\encodings\\_win_cp_codecs.py',
    'PYMODULE'),
   ('encodings', 'C:\\Python314\\Lib\\encodings\\__init__.py', 'PYMODULE'),
-  ('re._parser', 'C:\\Python314\\Lib\\re\\_parser.py', 'PYMODULE'),
-  ('re._constants', 'C:\\Python314\\Lib\\re\\_constants.py', 'PYMODULE'),
-  ('re._compiler', 'C:\\Python314\\Lib\\re\\_compiler.py', 'PYMODULE'),
-  ('re._casefix', 'C:\\Python314\\Lib\\re\\_casefix.py', 'PYMODULE'),
-  ('re', 'C:\\Python314\\Lib\\re\\__init__.py', 'PYMODULE'),
-  ('types', 'C:\\Python314\\Lib\\types.py', 'PYMODULE'),
-  ('reprlib', 'C:\\Python314\\Lib\\reprlib.py', 'PYMODULE'),
-  ('copyreg', 'C:\\Python314\\Lib\\copyreg.py', 'PYMODULE'),
-  ('locale', 'C:\\Python314\\Lib\\locale.py', 'PYMODULE'),
-  ('weakref', 'C:\\Python314\\Lib\\weakref.py', 'PYMODULE'),
-  ('posixpath', 'C:\\Python314\\Lib\\posixpath.py', 'PYMODULE'),
-  ('abc', 'C:\\Python314\\Lib\\abc.py', 'PYMODULE'),
-  ('stat', 'C:\\Python314\\Lib\\stat.py', 'PYMODULE'),
-  ('ntpath', 'C:\\Python314\\Lib\\ntpath.py', 'PYMODULE'),
-  ('heapq', 'C:\\Python314\\Lib\\heapq.py', 'PYMODULE'),
-  ('warnings', 'C:\\Python314\\Lib\\warnings.py', 'PYMODULE'),
-  ('traceback', 'C:\\Python314\\Lib\\traceback.py', 'PYMODULE'),
-  ('sre_compile', 'C:\\Python314\\Lib\\sre_compile.py', 'PYMODULE'),
-  ('collections', 'C:\\Python314\\Lib\\collections\\__init__.py', 'PYMODULE'),
-  ('operator', 'C:\\Python314\\Lib\\operator.py', 'PYMODULE'),
   ('sre_constants', 'C:\\Python314\\Lib\\sre_constants.py', 'PYMODULE'),
+  ('abc', 'C:\\Python314\\Lib\\abc.py', 'PYMODULE'),
+  ('linecache', 'C:\\Python314\\Lib\\linecache.py', 'PYMODULE'),
+  ('heapq', 'C:\\Python314\\Lib\\heapq.py', 'PYMODULE'),
   ('sre_parse', 'C:\\Python314\\Lib\\sre_parse.py', 'PYMODULE'),
+  ('warnings', 'C:\\Python314\\Lib\\warnings.py', 'PYMODULE'),
+  ('enum', 'C:\\Python314\\Lib\\enum.py', 'PYMODULE'),
+  ('types', 'C:\\Python314\\Lib\\types.py', 'PYMODULE'),
+  ('_collections_abc', 'C:\\Python314\\Lib\\_collections_abc.py', 'PYMODULE'),
+  ('sre_compile', 'C:\\Python314\\Lib\\sre_compile.py', 'PYMODULE'),
+  ('genericpath', 'C:\\Python314\\Lib\\genericpath.py', 'PYMODULE'),
+  ('copyreg', 'C:\\Python314\\Lib\\copyreg.py', 'PYMODULE'),
+  ('stat', 'C:\\Python314\\Lib\\stat.py', 'PYMODULE'),
+  ('locale', 'C:\\Python314\\Lib\\locale.py', 'PYMODULE'),
+  ('io', 'C:\\Python314\\Lib\\io.py', 'PYMODULE'),
+  ('reprlib', 'C:\\Python314\\Lib\\reprlib.py', 'PYMODULE'),
   ('os', 'C:\\Python314\\Lib\\os.py', 'PYMODULE')])

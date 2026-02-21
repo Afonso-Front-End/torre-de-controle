@@ -24,12 +24,11 @@
   min-width: min(1500px, 92vw);
   max-width: min(1500px, 95vw);
   max-height: none;
-  height: auto;
+  /* height: 100%; */
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   /* Margem fixa em vez de auto evita que o Canvas capture o 'vazio' ao redor */
-  margin: 2rem 0; 
   position: relative;
 }
 
@@ -52,14 +51,8 @@
   font-family: inherit;
 }
 
-.sla-dados-modal__logo-jt {
-  color: #fff;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.sla-dados-modal__logo-express {
-  color: #e53935;
-  text-shadow: 0 0 8px rgba(229, 57, 53, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+.sla-dados-modal__title-logo {
+  font-size: 1.25rem;
 }
 
 .sla-dados-modal__header-actions {
@@ -86,7 +79,7 @@
 
 .sla-dados-modal__body {
   flex: 0 0 auto;
-  min-height: auto;
+  /* min-height: auto; */
   padding: 1.25rem;
   overflow: visible;
   display: flex;

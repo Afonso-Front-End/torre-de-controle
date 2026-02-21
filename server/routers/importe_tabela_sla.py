@@ -14,7 +14,7 @@ warnings.filterwarnings("ignore", message="Workbook contains no default style", 
 
 from bson.errors import InvalidId
 from bson.objectid import ObjectId
-from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from openpyxl import load_workbook
 from pymongo.errors import BulkWriteError, PyMongoError
 from pymongo.operations import InsertOne, UpdateOne
@@ -23,6 +23,7 @@ from database import USER_ID_FIELD, get_db
 from limiter import limiter
 from routers.auth import require_user_id
 from table_ids import require_table_id
+from upload_limits import read_upload_with_limit
 
 router = APIRouter(prefix="/importe-tabela-sla", tags=["importe-tabela-sla"])
 COLLECTION = "sla_tabela"
@@ -116,7 +117,7 @@ async def salvar_sla(
     if not ext.endswith(".xlsx"):
         raise HTTPException(status_code=400, detail="Envie um arquivo .xlsx")
 
-    contents = await file.read()
+    contents = await read_upload_with_limit(file)
     try:
         rows = _excel_para_linhas(contents)
     except Exception as e:
@@ -177,17 +178,35 @@ async def salvar_sla(
     return {"saved": saved}
 
 
+def _validar_data_importacao(data: str | None) -> str | None:
+    """Valida formato YYYY-MM-DD. Retorna a string se válida, None caso contrário."""
+    if not data or not isinstance(data, str):
+        return None
+    s = data.strip()
+    if len(s) != 10 or s[4] != "-" or s[7] != "-":
+        return None
+    try:
+        y, m, d = int(s[:4]), int(s[5:7]), int(s[8:10])
+        if 1 <= m <= 12 and 1 <= d <= 31 and y >= 2000:
+            return s
+    except ValueError:
+        pass
+    return None
+
+
 @router.post("/atualizar")
 @limiter.limit("20/minute")
 async def atualizar_sla(
     request: Request,
     file: UploadFile = File(...),
+    data: str | None = Form(None),
     user_id: str = Depends(require_user_id),
     table_id: int = Depends(require_table_id),
 ):
     """
     Recebe um arquivo Excel (.xlsx) igual ao import. Atualiza linhas existentes (por número de pedido JMS)
-    e insere as novas (ex.: novos motoristas que receberam pedidos). Não apaga dados.
+    da data indicada e insere as novas com essa mesma data. Se 'data' não for enviada, usa a data de hoje.
+    Assim é possível atualizar a tabela de um dia anterior (ex.: no dia seguinte).
     """
     if not file.filename:
         raise HTTPException(status_code=400, detail="Arquivo não informado.")
@@ -195,7 +214,7 @@ async def atualizar_sla(
     if not ext.endswith(".xlsx"):
         raise HTTPException(status_code=400, detail="Envie um arquivo .xlsx")
 
-    contents = await file.read()
+    contents = await read_upload_with_limit(file)
     try:
         rows = _excel_para_linhas(contents)
     except Exception as e:
@@ -217,7 +236,8 @@ async def atualizar_sla(
         raise HTTPException(status_code=500, detail=f"Erro ao conectar ao banco de dados: {e}")
 
     now = datetime.now(timezone.utc)
-    import_date_str = now.strftime("%Y-%m-%d")
+    # Data da tabela a atualizar: se 'data' for válida (YYYY-MM-DD), usa essa data; senão usa hoje
+    import_date_str = _validar_data_importacao(data) or now.strftime("%Y-%m-%d")
     q_user = {USER_ID_FIELD: user_id}
 
     header_doc = col.find_one(
@@ -232,11 +252,16 @@ async def atualizar_sla(
     if idx_jms_db < 0:
         idx_jms_db = idx_jms
 
-    # Carregar mapa JMS -> _id numa única agregação (em vez de 1 find_one por linha)
+    # Carregar mapa JMS -> _id apenas dos documentos dessa data (atualizar só a tabela desse dia)
     jms_to_id = {}
     if idx_jms_db >= 0:
+        match = {
+            USER_ID_FIELD: user_id,
+            "_id": {"$ne": header_doc["_id"]},
+            IMPORT_DATE_FIELD: import_date_str,
+        }
         pipeline = [
-            {"$match": {USER_ID_FIELD: user_id, "_id": {"$ne": header_doc["_id"]}}},
+            {"$match": match},
             {"$project": {"_id": 1, "jms": {"$arrayElemAt": ["$values", idx_jms_db]}}},
         ]
         for doc in col.aggregate(pipeline):
@@ -313,7 +338,7 @@ async def salvar_entrada_galpao(
     if not ext.endswith(".xlsx"):
         raise HTTPException(status_code=400, detail="Envie um arquivo .xlsx")
 
-    contents = await file.read()
+    contents = await read_upload_with_limit(file)
     try:
         rows = _excel_para_linhas(contents)
     except Exception as e:

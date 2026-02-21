@@ -18,6 +18,7 @@ from database import get_db, USER_ID_FIELD
 from limiter import limiter
 from routers.auth import require_user_id
 from table_ids import require_table_id
+from upload_limits import read_upload_with_limit
 
 router = APIRouter(prefix="/importe-tabela-consulta-bipagems", tags=["importe-tabela-consulta-bipagems"])
 COLLECTION = "pedidos_com_status"
@@ -198,7 +199,7 @@ async def importar_pedidos_consultados(
     if not ext.endswith(".xlsx"):
         raise HTTPException(status_code=400, detail="Envie um arquivo .xlsx")
 
-    contents = await file.read()
+    contents = await read_upload_with_limit(file)
     try:
         rows = _excel_para_linhas(contents)
     except Exception as e:

@@ -5,6 +5,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { overlayVariants, modalContentVariants, transition } from '../../../../utils/animations'
+import { Logo } from '../../../../components/Logo'
 import SLAPercentCell from '../SLAPercentCell'
 import ModalCaptureButton from './ModalCaptureButton'
 import './SLADadosModal.css'
@@ -90,8 +91,7 @@ export default function SLADadosModal({
           >
             <div className="sla-dados-modal__header">
               <h2 id="sla-dados-modal-title" className="sla-dados-modal__title">
-                <span className="sla-dados-modal__logo-jt">J&T</span>
-                <span className="sla-dados-modal__logo-express"> EXPRESS</span>
+                <Logo jtColor="white" className="sla-dados-modal__title-logo" />
               </h2>
               <div className="sla-dados-modal__header-actions">
                 {/* Botão atualizado com nome de arquivo dinâmico */}

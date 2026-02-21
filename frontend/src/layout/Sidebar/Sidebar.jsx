@@ -10,6 +10,10 @@ import {
   TbChevronUp,
   TbBook,
 } from 'react-icons/tb'
+import { RiHomeLine } from 'react-icons/ri'
+import { LuHeadphones } from "react-icons/lu";
+import { RiVerifiedBadgeLine } from "react-icons/ri";
+import { TbCalendarClock } from "react-icons/tb";
 import './Sidebar.css'
 
 const iconSize = 22
@@ -18,17 +22,11 @@ const chevronSize = 18
 export function Sidebar() {
   const location = useLocation()
   const isVerificarSection = location.pathname === '/verificar-pedidos-parados' || location.pathname === '/consultar-pedidos' || location.pathname === '/resultados-consulta'
-  const isSLASection = location.pathname === '/sla' || location.pathname.startsWith('/sla/')
   const [verificarOpen, setVerificarOpen] = useState(isVerificarSection)
-  const [slaOpen, setSlaOpen] = useState(isSLASection)
 
   useEffect(() => {
     if (isVerificarSection) setVerificarOpen(true)
   }, [isVerificarSection])
-
-  useEffect(() => {
-    if (isSLASection) setSlaOpen(true)
-  }, [isSLASection])
 
   return (
     <aside className="layout-sidebar">
@@ -40,14 +38,16 @@ export function Sidebar() {
           to="/"
           className={`layout-sidebar__link ${location.pathname === '/' ? 'layout-sidebar__link--active' : ''}`}
         >
-          <TbHome className="layout-sidebar__icon" size={iconSize} aria-hidden />
+          {/* <TbHome className="layout-sidebar__icon" size={iconSize} aria-hidden /> */}
+          <RiHomeLine className="layout-sidebar__icon" size={iconSize} aria-hidden />
           <span>Início</span>
         </Link>
         <Link
           to="/lista-telefones"
           className={`layout-sidebar__link ${location.pathname === '/lista-telefones' ? 'layout-sidebar__link--active' : ''}`}
         >
-          <TbPhone className="layout-sidebar__icon" size={iconSize} aria-hidden />
+          {/* <TbPhone className="layout-sidebar__icon" size={iconSize} aria-hidden /> */}
+          <LuHeadphones className="layout-sidebar__icon" size={iconSize} aria-hidden />
           <span>Lista de telefones</span>
         </Link>
         <div className="layout-sidebar__accordion">
@@ -59,7 +59,8 @@ export function Sidebar() {
             aria-controls="sidebar-verificar-pedidos"
             id="sidebar-verificar-trigger"
           >
-            <TbCalendar className="layout-sidebar__icon" size={iconSize} aria-hidden />
+            {/* <TbCalendar className="layout-sidebar__icon" size={iconSize} aria-hidden /> */}
+            <RiVerifiedBadgeLine className="layout-sidebar__icon" size={iconSize} aria-hidden />
             <span>Verificar pedidos</span>
             {verificarOpen ? (
               <TbChevronUp className="layout-sidebar__accordion-chevron" size={chevronSize} aria-hidden />
@@ -78,67 +79,38 @@ export function Sidebar() {
               to="/verificar-pedidos-parados"
               className={`layout-sidebar__sublink ${location.pathname === '/verificar-pedidos-parados' ? 'layout-sidebar__sublink--active' : ''}`}
             >
-              Importe tabela de pedidos
+              Tabela de pedidos
             </Link>
             <Link
               to="/consultar-pedidos"
               className={`layout-sidebar__sublink ${location.pathname === '/consultar-pedidos' ? 'layout-sidebar__sublink--active' : ''}`}
             >
-              Importe tabela Consulta das bipagems em tempo real
+              Consulta bipagems (tempo real)
             </Link>
             <Link
               to="/resultados-consulta"
               className={`layout-sidebar__sublink ${location.pathname === '/resultados-consulta' ? 'layout-sidebar__sublink--active' : ''}`}
             >
-              Área de trabalho
-            </Link>
-          </div>
-        </div>
-        <div className="layout-sidebar__accordion">
-          <button
-            type="button"
-            className={`layout-sidebar__accordion-trigger ${slaOpen ? 'layout-sidebar__accordion-trigger--open' : ''} ${isSLASection ? 'layout-sidebar__accordion-trigger--active' : ''}`}
-            onClick={() => setSlaOpen((v) => !v)}
-            aria-expanded={slaOpen}
-            aria-controls="sidebar-sla-analise"
-            id="sidebar-sla-analise-trigger"
-          >
-            <TbChartBar className="layout-sidebar__icon" size={iconSize} aria-hidden />
-            <span>SLA + Análise</span>
-            {slaOpen ? (
-              <TbChevronUp className="layout-sidebar__accordion-chevron" size={chevronSize} aria-hidden />
-            ) : (
-              <TbChevronDown className="layout-sidebar__accordion-chevron" size={chevronSize} aria-hidden />
-            )}
-          </button>
-          <div
-            id="sidebar-sla-analise"
-            className="layout-sidebar__accordion-panel"
-            role="region"
-            aria-labelledby="sidebar-sla-analise-trigger"
-            hidden={!slaOpen}
-          >
-            <Link
-              to="/sla"
-              className={`layout-sidebar__sublink ${location.pathname === '/sla' || location.pathname === '/sla/performance' ? 'layout-sidebar__sublink--active' : ''}`}
-            >
-              SLA
-            </Link>
-            <Link
-              to="/sla/analise"
-              className={`layout-sidebar__sublink ${location.pathname === '/sla/analise' ? 'layout-sidebar__sublink--active' : ''}`}
-            >
-              Análise
+              Area de trabalho
             </Link>
           </div>
         </div>
         <Link
-          to="/documentacao"
+          to="/sla"
+          className={`layout-sidebar__link ${location.pathname === '/sla' ? 'layout-sidebar__link--active' : ''}`}
+        >
+          {/* <TbChartBar className="layout-sidebar__icon" size={iconSize} aria-hidden /> */}
+          <TbCalendarClock className="layout-sidebar__icon" size={iconSize} aria-hidden />
+          <span>SLA</span>
+        </Link>
+
+        {/* <Link to="/documentacao"    
           className={`layout-sidebar__link ${location.pathname === '/documentacao' ? 'layout-sidebar__link--active' : ''}`}
         >
           <TbBook className="layout-sidebar__icon" size={iconSize} aria-hidden />
           <span>Documentação</span>
-        </Link>
+        </Link> */}
+
         <Link
           to="/perfil"
           className={`layout-sidebar__link ${location.pathname === '/perfil' ? 'layout-sidebar__link--active' : ''}`}

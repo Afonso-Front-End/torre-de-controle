@@ -3,10 +3,11 @@
  * Coluna de marcar: ao marcar uma linha copia o "Número de pedido JMS" dessa linha; ao marcar o cabeçalho copia todos.
  */
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
-import { MdSettings, MdMessage, MdDownload, MdEdit, MdCheck } from 'react-icons/md'
+import { MdSettings, MdMessage, MdDownload, MdEdit, MdCheck, MdContentCopy } from 'react-icons/md'
 import * as XLSX from 'xlsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { overlayVariants, modalContentVariants, transition } from '../../../../utils/animations'
+import { Logo } from '../../../../components/Logo'
 import { getSLANaoEntregues, getSLAEntradaGalpao, getSLAEntregues, getContatoListaTelefones, updateContatoListaTelefones, upsertContatoListaTelefones, updateConfig } from '../../../../services'
 import { useNotification } from '../../../../context/NotificationContext'
 import { useAppContext } from '../../../../context'
@@ -175,6 +176,50 @@ export default function SLANaoEntreguesModal({
   mensagemTextoRef.current = mensagemTexto
   const mensagemEditRef = useRef(null)
 
+  const [configColunasOpen, setConfigColunasOpen] = useState(false)
+  const [configColunasSelection, setConfigColunasSelection] = useState([])
+  const [savingConfigColunas, setSavingConfigColunas] = useState(false)
+
+  const colunasCopiaConfig = user?.config?.colunas_copia_sla_nao_entregues
+  const columnsToCopy = useMemo(() => {
+    if (!header?.length) return []
+    if (Array.isArray(colunasCopiaConfig) && colunasCopiaConfig.length > 0) {
+      const set = new Set(header)
+      const valid = colunasCopiaConfig.filter((c) => set.has(c))
+      if (valid.length > 0) return valid
+    }
+    return [...header]
+  }, [header, colunasCopiaConfig])
+
+  const openConfigColunas = useCallback(() => {
+    const list = columnsToCopy.length ? [...columnsToCopy] : (header?.length ? [...header] : [])
+    setConfigColunasSelection(list)
+    setConfigColunasOpen(true)
+  }, [columnsToCopy, header])
+
+  const handleSaveConfigColunas = useCallback(async () => {
+    if (!token) return
+    setSavingConfigColunas(true)
+    try {
+      await updateConfig(token, { colunas_copia_sla_nao_entregues: configColunasSelection })
+      await refetchUser()
+      setConfigColunasOpen(false)
+      showNotification('Colunas para cópia guardadas.', 'success')
+    } catch (err) {
+      showNotification(err?.message ?? 'Não foi possível guardar.', 'error')
+    } finally {
+      setSavingConfigColunas(false)
+    }
+  }, [token, configColunasSelection, refetchUser, showNotification])
+
+  const toggleConfigColuna = useCallback((col) => {
+    setConfigColunasSelection((prev) => {
+      const next = prev.filter((c) => c !== col)
+      if (next.length === prev.length) return [...prev, col]
+      return next
+    })
+  }, [])
+
   const jmsColIndex = useMemo(() => getJmsColumnIndex(header), [header])
   const saudacao = useMemo(() => getSaudacao(), [])
   const totalPedidos = data?.length ?? 0
@@ -240,6 +285,27 @@ export default function SLANaoEntreguesModal({
       showNotification('Não foi possível exportar o Excel.', 'error')
     }
   }, [header, data, motorista, base, showNotification])
+
+  /** Copia todos os dados em texto formatado (apenas colunas selecionadas na config). */
+  const handleCopyFormatted = useCallback(async () => {
+    if (!header?.length || !data?.length) {
+      showNotification('Sem dados para copiar.', 'error')
+      return
+    }
+    const cols = columnsToCopy.length ? columnsToCopy : header
+    const indices = cols.map((name) => header.indexOf(name)).filter((i) => i >= 0)
+    const blocks = data.map((row) => {
+      const vals = row?.values ?? []
+      return indices.map((i) => `${header[i]}: ${vals[i] != null ? String(vals[i]) : ''}`).join('\n')
+    })
+    const text = blocks.join('\n\n')
+    try {
+      await navigator.clipboard.writeText(text)
+      showNotification('Dados copiados (texto formatado).', 'success')
+    } catch {
+      showNotification('Não foi possível copiar.', 'error')
+    }
+  }, [header, data, columnsToCopy, showNotification])
 
   const fetchNaoEntregues = useCallback(async () => {
     if (!token || !motorista?.trim()) return
@@ -429,6 +495,7 @@ export default function SLANaoEntreguesModal({
       setCopyMode('none')
       setSelectedRowId(null)
       setTelefone('')
+      setConfigColunasOpen(false)
       setContatoDocId(null)
       setPhoneEditing(false)
       setMensagemModalOpen(false)
@@ -474,8 +541,7 @@ export default function SLANaoEntreguesModal({
           >
             <div className="sla-nao-entregues-modal__header">
               <h2 id="sla-nao-entregues-modal-title" className="sla-nao-entregues-modal__title">
-                <span className="sla-nao-entregues-modal__logo-jt">J&T</span>
-                <span className="sla-nao-entregues-modal__logo-express"> EXPRESS</span>
+                <Logo jtColor="white" className="sla-nao-entregues-modal__title-logo" />
               </h2>
               <div className="sla-nao-entregues-modal__header-actions">
                 <button type="button" className="sla-nao-entregues-modal__close" onClick={onClose} aria-label="Fechar">
@@ -547,6 +613,16 @@ export default function SLANaoEntreguesModal({
                         <button
                           type="button"
                           className="sla-nao-entregues-modal__action-btn"
+                          title="Copiar todos os dados (texto formatado)"
+                          aria-label="Copiar todos os dados (texto formatado)"
+                          disabled={loading || !data?.length}
+                          onClick={handleCopyFormatted}
+                        >
+                          <MdContentCopy className="sla-nao-entregues-modal__action-icon" aria-hidden />
+                        </button>
+                        <button
+                          type="button"
+                          className="sla-nao-entregues-modal__action-btn"
                           title="Descarregar tabela em Excel"
                           aria-label="Descarregar tabela em Excel"
                           disabled={loading || !data?.length}
@@ -556,7 +632,14 @@ export default function SLANaoEntreguesModal({
                         </button>
                         {tipo === 'nao-entregues' && (
                         <>
-                        <button type="button" className="sla-nao-entregues-modal__action-btn" title="Configurações" aria-label="Configurações">
+                        <button
+                          type="button"
+                          className="sla-nao-entregues-modal__action-btn"
+                          title="Configurações — colunas a copiar"
+                          aria-label="Configurações — colunas a copiar"
+                          disabled={!header?.length}
+                          onClick={openConfigColunas}
+                        >
                           <MdSettings className="sla-nao-entregues-modal__action-icon" aria-hidden />
                         </button>
                         <button type="button" className="sla-nao-entregues-modal__action-btn" title="Escrever mensagem para envio" aria-label="Escrever mensagem para envio" onClick={handleOpenMensagemModal}>
@@ -735,6 +818,74 @@ export default function SLANaoEntreguesModal({
                     Abrir no WhatsApp
                   </button>
                   <button type="button" className="sla-mensagem-modal__btn sla-mensagem-modal__btn--secondary" onClick={() => setMensagemModalOpen(false)}>
+                    Fechar
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+        {open && configColunasOpen && header?.length > 0 && (
+          <motion.div
+            className="sla-nao-entregues-modal-overlay sla-mensagem-modal-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="sla-config-colunas-title"
+            variants={overlayVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={transition}
+            onClick={() => setConfigColunasOpen(false)}
+          >
+            <motion.div
+              className="sla-nao-entregues-modal sla-config-colunas-modal"
+              variants={modalContentVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={transition}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="sla-mensagem-modal__header">
+                <h2 id="sla-config-colunas-title" className="sla-mensagem-modal__title">
+                  Colunas a copiar
+                </h2>
+                <div className="sla-mensagem-modal__header-actions">
+                  <button type="button" className="sla-mensagem-modal__close" onClick={() => setConfigColunasOpen(false)} aria-label="Fechar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                      <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div className="sla-config-colunas-body">
+                <p className="sla-config-colunas-desc">
+                  Selecione as colunas que o botão Copiar incluirá no texto formatado.
+                </p>
+                <div className="sla-config-colunas-list" role="group" aria-labelledby="sla-config-colunas-title">
+                  {header.map((col) => (
+                    <label key={col} className="sla-config-colunas-item">
+                      <input
+                        type="checkbox"
+                        checked={configColunasSelection.includes(col)}
+                        onChange={() => toggleConfigColuna(col)}
+                        className="sla-config-colunas-checkbox"
+                      />
+                      <span className="sla-config-colunas-label">{col}</span>
+                    </label>
+                  ))}
+                </div>
+                <div className="sla-mensagem-modal__actions">
+                  <button
+                    type="button"
+                    className="sla-mensagem-modal__btn sla-mensagem-modal__btn--save"
+                    onClick={handleSaveConfigColunas}
+                    disabled={savingConfigColunas || configColunasSelection.length === 0}
+                  >
+                    {savingConfigColunas ? 'A guardar…' : 'Guardar'}
+                  </button>
+                  <button type="button" className="sla-mensagem-modal__btn sla-mensagem-modal__btn--secondary" onClick={() => setConfigColunasOpen(false)}>
                     Fechar
                   </button>
                 </div>
